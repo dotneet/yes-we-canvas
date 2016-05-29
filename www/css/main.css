@@ -1,0 +1,29 @@
+body {
+  background: #afafaf;
+  padding:0;
+  margin:0;
+}
+
+.container {
+  text-align: center;
+}
+
+#main-canvas {
+  margin: 0 auto;
+  background: #ffffff;
+}
+
+#main-control-panel {
+  margin: 0 auto;
+}
+
+button {
+  font-size: 16px;
+  line-height: 24px;
+}
+
+button i {
+  font-size: 24px;
+  line-height: 24px;
+  vertical-align: top;
+}

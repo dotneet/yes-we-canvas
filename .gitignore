@@ -1,0 +1,24 @@
+# Mac
+.DS_Store
+
+# Idea
+.idea
+
+# Temporary
+.*.swp
+.*.tmp
+
+# Node
+npm-debug.log
+/node_modules
+
+# Bower
+/www/components
+/www/js/bundle.js
+
+# output
+/output
+/www/*.mp4
+/www/*.avi
+/www/*.webm
+
