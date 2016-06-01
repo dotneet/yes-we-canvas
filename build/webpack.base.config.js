@@ -3,7 +3,7 @@ var path = require('path');
 module.exports = {
   context: __dirname + "/..",
   entry: {
-    bundle: "./src/app.js"
+    bundle: "./src/client/app.js"
   },
 
   output: {
@@ -24,7 +24,7 @@ module.exports = {
   resolve: {
     extensions: ["", ".js", ".jsx"],
     // require()のパスを追加する
-    root: path.resolve('./src')
+    root: path.resolve('./src/client')
   },
 
   module: {

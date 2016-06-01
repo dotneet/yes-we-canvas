@@ -1,3 +1,5 @@
 module.exports = {
-  ffmpegCmd: 'ffmpeg'
+  ffmpegCmd: 'ffmpeg',
+  outputDir: __dirname + '/output',
+  wwwDir:__dirname + '/www'
 }
