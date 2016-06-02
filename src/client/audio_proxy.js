@@ -14,16 +14,22 @@ export default class AudioProxy {
   }
   play() {
     if ( this.element.paused ) {
-      this.element.play()
+      if ( !this.app.isBatch ) {
+        this.element.play()
+      }
       this.commands.push({name:"play", key: this.app.currentKey})
     }
   }
   pause() {
-    this.element.pause()
+    if ( !this.app.isBatch ) {
+      this.element.pause()
+    }
     this.commands.push({name:"pause", key: this.app.currentKey})
   }
   reset() {
-    this.element.pause()
-    this.element.currentTime = 0
+    if ( !this.app.isBatch ) {
+      this.element.pause()
+      this.element.currentTime = 0
+    }
   }
 }

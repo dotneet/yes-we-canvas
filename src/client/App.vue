@@ -13,7 +13,7 @@
       </div>
       <div style="margin-top: 0.5rem">
         <button id="btn-record" @click="record"><i class="material-icons">videocam</i>Output Video</button>
-        <button class="iframe fancybox" href="#video">Show Video</button>
+        <button class="iframe fancybox" href="#video" @click="showVideo">Show Video</button>
       </div>
     </div>
     <video id="video" :src="videoSource" :width="canvasWidth" :height="canvasHeight" controls style="display: none;">Video tag is not supported in this browser.</video>
@@ -53,7 +53,8 @@ export default {
     var data = {
         videoSource: 'output.mp4',
         context: new Context(this, io(), window.animation),
-        animation: window.animation
+        animation: window.animation,
+        isBatch: this.$store.state.batch
       };
     return data;
   },
@@ -63,6 +64,7 @@ export default {
       this.context.audio = new AudioProxy(this, 'audio')
       this.context.clear()
       console.log('application initialized');
+      this.$dispatch('application_initialized')
     })
   },
   computed: {
@@ -76,7 +78,7 @@ export default {
       this.context.canvas.renderAll();
     },
     record() {
-      if ( confirm('Do you want to export as video?') ) {
+      if ( this.isBatch || confirm('Do you want to export as video?') ) {
         reloadMainScript(()=>{ 
           this.context.clear()
           this.context.socket.emit('start_record', {
@@ -122,17 +124,22 @@ export default {
     },
     createMovie() {
       this.context.socket.emit('create_movie', {}, (err,stdout,stderr) => {
-        if ( this.$store.state.batch ) {
+        if ( this.isBatch ) {
           this.$dispatch('finish_record')
         } else {
           if ( err !== null ) {
             alert(stderr)
           } else {
-            $('#video').attr('src', 'output.mp4?' + Math.floor(100000*Math.random()));
-            $('button.fancybox').click()
+            this.showVideo()
           }
         }
       })
+    },
+    showVideo() {
+      this.videoSource = 'output.mp4?' + Math.floor(100000*Math.random())
+      var elm = $('#video')[0]
+      elm.load()
+      $('button.fancybox').click()
     },
     play() {
       reloadMainScript(()=>{ 

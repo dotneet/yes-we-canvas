@@ -33,23 +33,25 @@ module.exports = function (io, serverConfig) {
   const outputDir = serverConfig.outputDir
   const wwwDir = serverConfig.wwwDir
 
-  var recordContext = {
-    frameRate: 30,
-    length: null,
-    imageFormat: null,
-    sound: null
-  }
+  var recordIndex = 0;
+  var recordContext = {}
 
-  function clearRecordContext() {
+  function initRecordContext() {
+    recordIndex = 0;
+    recordContext = {
+      frameRate: 30,
+      length: null,
+      imageFormat: null,
+      sound: null
+    }
   }
 
   io.on('connection', function(socket){
     console.log('connected');
-    var recordIndex = 0;
 
     socket.on('start_record', function(data, cb) {
       console.log('start_record')
-      recordIndex = 0;
+      initRecordContext()
       recordContext.imageFormat = data.format;
       recordContext.frameRate = data.frameRate;
       recordContext.movieLength = data.movieLength;
