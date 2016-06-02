@@ -16,7 +16,6 @@ export default class Context {
   initFabric() {
     var n = document.querySelector('#main-canvas');
     this.canvas = new fabric.StaticCanvas('main-canvas');
-    this.canvas.setBackgroundColor('#ffffff');
 
     // this.canvas.on('after:render', function() {});
   }
@@ -37,6 +36,8 @@ export default class Context {
 
   clear() {
     this.canvas.clear();
+    this.canvas.setBackgroundColor('#ffffff')
+    this.canvas.setBackgroundImage(null)
     var store = this.app.$store
     this.animation.doInit(this, store.state.config);
     this.canvas.setWidth(store.state.config.width);
