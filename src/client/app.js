@@ -1,8 +1,13 @@
 import Vue from 'vue'
 import App from './App.vue'
 import store from './vuex/store.js'
+import Animation from './animation.js'
 
 Vue.config.debug = true
+
+var animation = new Animation()
+store.animation = animation
+window.animation = animation
 
 /* eslint-disable no-new */
 const vue = new Vue({

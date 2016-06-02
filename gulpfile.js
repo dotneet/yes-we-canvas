@@ -17,14 +17,14 @@ gulp.task('update', ['update'], function() {
 gulp.task('update', function() {
   return gulp.src('src/client/app.js')
     .pipe(plumber({errorHandler: notify.onError('<%= error.message %>')}))
-    .pipe(webpack(require('./build/webpack.dev.config.js')))
+    .pipe(webpack(require('./build/webpack.client.dev.config.js')))
     .pipe(gulp.dest('www/js/'))
 });
 
 gulp.task('watch', function() {
   return gulp.src('src/client/app.js')
     .pipe(plumber({errorHandler: notify.onError('<%= error.message %>')}))
-    .pipe(webpack(_.merge(require('./build/webpack.dev.config.js'), {watch: true})))
+    .pipe(webpack(_.merge(require('./build/webpack.client.dev.config.js'), {watch: true})))
     .pipe(gulp.dest('www/js/'))
 });
 

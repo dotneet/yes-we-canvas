@@ -16,35 +16,29 @@
         <button class="iframe fancybox" href="#video">Show Video</button>
       </div>
     </div>
-    <video id="video" :src="videoSource" :width="canvasWidth" :height="canvasHeight" controls style="display: none;">Error</video>
+    <video id="video" :src="videoSource" :width="canvasWidth" :height="canvasHeight" controls style="display: none;">Video tag is not supported in this browser.</video>
+    <audio id="audio" :src="audioSource" style="display: none;">Audio tag is not supported in this browser.</audio>
   </div>
 </template>
 
 <script>
 
+import Context from './context.js';
+import AudioProxy from './audio_proxy.js';
+
 var timer = null
-var canvas = null;
-function initApp() {
-  initFabric();
-  initWebSocket();
+
+function waitMainScriptLoading(cb) {
+  var f;
+  f = () => {
+     if ( animation.loaded() ) {
+       cb()
+     } else {
+       setTimeout(f, 200)
+     }
+  }
+  setTimeout(f, 200)
 }
-
-function initFabric() {
-  var n = document.querySelector('#main-canvas');
-  canvas = new fabric.StaticCanvas('main-canvas');
-  canvas.setBackgroundColor('#ffffff');
-
-  // canvas.on('after:render', function() {});
-}
-
-function clearContext(store) {
-  canvas.clear();
-  window.init(canvas, store.state.config);
-  canvas.setWidth(store.state.config.width);
-  canvas.setHeight(store.state.config.height);
-  store.dispatch('SET_CURRENT_KEY', 0)
-}
-
 function reloadMainScript(cb) {
   var script = document.createElement('script')
   script.src = 'js/main.js?' + Math.floor(Math.random() * 1000000)
@@ -53,32 +47,23 @@ function reloadMainScript(cb) {
   document.head.appendChild(script)
 }
 
-var socket = io();
-function initWebSocket() {
-  socket.on('connect', function() {
-    console.log('WebSocket:connected');
-  });
-  socket.onmessage = function(data) {
-    console.log('WebSocket:onmessage');
-    console.log(data);
-  };
-  socket.onerror = function(e) {
-    console.log('WebSocket:onerror');
-    console.log(e);
-  };
-}
-
 export default {
   name: 'App',
   data () {
-    return {
-        videoSource: 'output.mp4'
+    var data = {
+        videoSource: 'output.mp4',
+        context: new Context(this, io(), window.animation),
+        animation: window.animation
       };
+    return data;
   },
   ready () {
-    initApp();
-    clearContext(this.$store);
-    console.log('application initialized');
+    waitMainScriptLoading(()=>{
+      this.context.init()
+      this.context.audio = new AudioProxy(this, 'audio')
+      this.context.clear()
+      console.log('application initialized');
+    })
   },
   computed: {
     totalFrame () {
@@ -87,16 +72,17 @@ export default {
   },
   methods: {
     update() {
-      update(canvas, this.currentKey)
-      canvas.renderAll();
+      this.animation.doUpdate(this.currentKey)
+      this.context.canvas.renderAll();
     },
     record() {
       if ( confirm('Do you want to export as video?') ) {
         reloadMainScript(()=>{ 
-          clearContext(this.$store);
-          socket.emit('start_record', {
+          this.context.clear()
+          this.context.socket.emit('start_record', {
               format: this.config.imageFormat,
-              frameRate: this.config.frameRate
+              frameRate: this.config.frameRate,
+              movieLength: this.config.movieLength
             }, ()=> {
               this.saveAllFrames()
             })
@@ -111,21 +97,13 @@ export default {
         this.$store.dispatch('NEXT_KEY')
         this.update()
         c.toBlob((blob) => {
-          socket.emit('record', blob, () => {
+          this.context.socket.emit('record', blob, () => {
             if ( this.currentKey < totalFrame ) {
               record()
             } else {
-              socket.emit('create_movie', {}, (err,stdout,stderr) => {
-                if ( this.$store.state.batch ) {
-                  this.$dispatch('finish_record')
-                } else {
-                  if ( err !== null ) {
-                    alert(stderr)
-                  } else {
-                    $('#video').attr('src', 'output.mp4?' + Math.floor(100000*Math.random()));
-                    $('button.fancybox').click()
-                  }
-                }
+              this.stop()
+              this.sendSoundCommand(() => {
+                this.createMovie()
               })
             }
           })
@@ -133,9 +111,32 @@ export default {
       }
       record()
     },
+    sendSoundCommand(cb) {
+      if ( this.context.audio.commands.length > 0 ) {
+        this.context.socket.emit('set_sound', {commands: this.context.audio.commands}, () => {
+          cb()
+        })
+      } else {
+        cb()
+      }
+    },
+    createMovie() {
+      this.context.socket.emit('create_movie', {}, (err,stdout,stderr) => {
+        if ( this.$store.state.batch ) {
+          this.$dispatch('finish_record')
+        } else {
+          if ( err !== null ) {
+            alert(stderr)
+          } else {
+            $('#video').attr('src', 'output.mp4?' + Math.floor(100000*Math.random()));
+            $('button.fancybox').click()
+          }
+        }
+      })
+    },
     play() {
       reloadMainScript(()=>{ 
-        clearContext(this.$store)
+        this.context.clear()
         if ( timer != null ) {
           clearInterval(timer)
         }
@@ -145,13 +146,13 @@ export default {
           this.$store.dispatch('NEXT_KEY')
           this.update()
           if ( this.currentKey >= totalFrame ) {
-            clearInterval(timer)
-            timer = null;
+            this.stop()
           }
         }, 1000 / this.config.frameRate)
       })
     },
     stop () {
+      this.animation.stop()
       clearInterval(timer)
       timer = null
     },

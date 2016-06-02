@@ -5,7 +5,7 @@
   "main": "src/server.js",
   "scripts": {
     "dev": "node-dev src/server/main.js",
-    "build": "webpack --progress --hide-modules --config build/webpack.dev.config.js",
+    "build": "webpack --progress --hide-modules --config build/webpack.client.dev.config.js",
     "watch": "webpack --watch --config build/webpack.dev.config.js"
   },
   "author": "devneko <dotneet@gmail.com>",

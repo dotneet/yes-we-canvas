@@ -1,5 +1,11 @@
+/**
+ * this.canvas: fabric.StaticCanvas
+ * this.audio: Audio
+ */
 var rect = null;
-function init(canvas, config) {
+animation.init = function(config) {
+  console.log('INIT')
+  this.audio.setSource('http://localhost:8000/sample.mp3')
   config.width = 320
   config.height = 240
   config.frameRate = 24
@@ -13,15 +19,20 @@ function init(canvas, config) {
     width: 60,
     height: 50
   });
-  canvas.add(rect);
+  this.canvas.add(rect);
 
+  var canvas = this.canvas
   fabric.Image.fromURL('img/bg_sample01.jpg', function(img) {
     canvas.setBackgroundImage(img);
     canvas.renderAll();
   });
 }
 
-function update(canvas, key) {
+animation.update = function(key) {
+  if ( key == 1 ) {
+    this.audio.play()
+  }
+
   rect.left = 100 + key;
   rect.angle = key;
 }

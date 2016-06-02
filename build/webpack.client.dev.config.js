@@ -1,4 +1,4 @@
-var config = require('./webpack.base.config')
+var config = require('./webpack.client.base.config')
 
 config.devtool = 'eval-source-map'
 

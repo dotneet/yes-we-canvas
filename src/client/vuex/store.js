@@ -14,7 +14,8 @@ const state = {
     imageFormat: 'image/jpeg'
   },
   batch: false,
-  currentKey: 0,
+  animation: null,
+  currentKey: 0
 }
 
 const actions = {

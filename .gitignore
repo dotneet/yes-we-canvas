@@ -18,6 +18,7 @@ npm-debug.log
 
 # output
 /output
+/www/*.mp3
 /www/*.mp4
 /www/*.avi
 /www/*.webm
