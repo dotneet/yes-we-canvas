@@ -14,6 +14,7 @@ const state = {
     imageFormat: 'image/jpeg'
   },
   batch: false,
+  script: null,
   animation: null,
   currentKey: 0
 }

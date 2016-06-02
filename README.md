@@ -1,12 +1,12 @@
 # Yes we canvas
-YWC(Yes we canvas)はHTML5 CanvasのアニメーションをJavaScriptで記述し、ビデオファイルに書き出すためのツールです。  
+YWC(Yes we canvas) is a tool for writing animation in javascript and exporting as video file easily.
 
-# 依存関係
+# Dependencies
  - NodeJS (5.0 or later)
  - ffmpeg
  - PhantomJS
 
-# セットアップ
+# Set Up
 
 ```
 npm i -g bower webpack node-dev
@@ -15,45 +15,68 @@ bower i
 npm run build
 ```
 
-# 使い方
+# How to use it
 
-## サーバーの起動
+## Launch server
 
 ```bash
 node server
 ```
 
-## アニメーションの確認とビデオ書き出し
-Chromeブラウザで 'http://localhost:8000' を開きます。
+## Write an animation
 
-## コーディング
+you can write an animation code at "animation/*.js".
 
-www/js/main.js にアニメーションの内容を記述します。  
+## Show animation and export as video file
 
-### init(canvas,config) 
-アニメーションの開始時に一度だけ呼ばれます。  
-canvas: fabric.StaticCanvas  
-config: アニメーション設定です。 
+Open url 'http://localhost:8000' in chrome browser.
 
-#### config設定値
+### animation.init(config)
 
-width: 横幅を指定します  
-height: 高さを指定します  
-movieLength: アニメーションの秒数を指定します  
-frameRate: １秒間のフレームレート(FPS)を指定します  
+animation.init() is called at once on beginnig of animation.
 
-### update(canvas, key)
-アニメーションの１フレーム毎に呼ばれます。  
-canvas: fabric.StaticCanvas  
-key: 現在のフレーム番号  
+this.canvas: fabric.StaticCanvas  
+this.audio: for controling audio playing.
+config: animation configuration.
 
+#### config
 
-##コマンドラインからのビデオ書き出し
+width: canvas width
+height: canvas height
+movieLength: animation length(seconds)  
+frameRate: frame per second.
+
+### animation.update(key)
+
+animation.update() is called by every frame.
+
+this.canvas: fabric.StaticCanvas  
+key: current frame number
+
+## writing a video file by command line.
 
 ```bash
 phantomjs record.js
 ```
 
-#ライセンス
+with parameter file.
+
+```bash
+phantomjs record.js test.json
+```
+
+### exmaple of parameter file 
+```json:test.json
+{
+  "script": "sample.js",
+  "params": {
+    "img1": "http://example.com/image/abc.png"
+  }
+}
+
+```
+
+# License
 
 MIT License
+

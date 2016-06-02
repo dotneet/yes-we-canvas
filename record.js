@@ -1,4 +1,21 @@
+'use strict';
+/**
+ * This script make a movie file.
+ * It is executed by phantomjs.
+ */
+
+var system = require('system');
 var page = require('webpage').create();
+var fs = require('fs');
+
+var args = system.args;
+
+var additionalParams = null;
+if ( args.length > 1 ) {
+  var file = args[1];
+  var stream = fs.open(file, 'r');
+  additionalParams = JSON.parse(stream.read())
+}
 
 page.onConsoleMessage = function(msg, lineNum, sourceId) {
   console.log('Client Message:' + msg);
@@ -10,8 +27,23 @@ page.onError = function (msg,trace) {
 };
 
 page.onCallback = function (data) {
-  if ( data.cmd === "exit" ) {
-    page.render('output/example.png');
+  if ( data.cmd === "prepare" ) {
+    if ( additionalParams !== null ) {
+      var s = "function(){ window.store.state.script = '" + additionalParams.script + "'; }";
+      page.evaluateJavaScript(s)
+    }
+    return additionalParams
+  } else if ( data.cmd === "initialized" ) {
+    page.evaluate(function() {
+      $('#btn-record').click();
+    })
+  } else if ( data.cmd === "script_onload" ) {
+    if ( additionalParams !== null ) {
+      var s = "function(){ window.animation.params = JSON.parse('" + JSON.stringify(additionalParams.params) + "'); }";
+      page.evaluateJavaScript(s)
+    }
+  } else if ( data.cmd === "exit" ) {
+    console.log("exit");
     phantom.exit();
     return "";
   } else {
@@ -22,9 +54,5 @@ page.onCallback = function (data) {
 
 page.open('http://localhost:8000/index.html', function(status) {
   console.log("complete page loading.");
-  if(status === "success") {
-    var c = page.evaluate(function(){
-      $('#btn-record').click();
-    });
-  }
 });
+

@@ -1,5 +1,10 @@
 <template>
   <div class="container">
+    <div>
+      <select @change="changeScript" v-model="selectedScript">
+        <option v-for="script in scripts" :value="script">{{ script }}</option>
+      </select>
+    </div>
     <canvas id="main-canvas" :width="canvasWidth" :height="canvasHeight"></canvas>
     <div id="main-control-panel">
       <div>
@@ -39,13 +44,6 @@ function waitMainScriptLoading(cb) {
   }
   setTimeout(f, 200)
 }
-function reloadMainScript(cb) {
-  var script = document.createElement('script')
-  script.src = 'js/main.js?' + Math.floor(Math.random() * 1000000)
-  script.onload = cb
-  
-  document.head.appendChild(script)
-}
 
 export default {
   name: 'App',
@@ -54,17 +52,34 @@ export default {
         videoSource: 'output.mp4',
         context: new Context(this, io(), window.animation),
         animation: window.animation,
-        isBatch: this.$store.state.batch
+        isBatch: this.$store.state.batch,
+        scripts: [],
+        selectedScript: null
       };
     return data;
   },
   ready () {
-    waitMainScriptLoading(()=>{
-      this.context.init()
-      this.context.audio = new AudioProxy(this, 'audio')
-      this.context.clear()
-      console.log('application initialized');
-      this.$dispatch('application_initialized')
+    $.ajax({
+      url: '/animation/',
+      dataType: 'json',
+      complete: (response) => {
+        console.log(response)
+        this.scripts = response.responseJSON.files
+        if ( this.$store.state.script !== null ) {
+          this.selectedScript = this.$store.state.script
+        } else {
+          this.selectedScript = this.scripts[0]
+        }
+        this.loadScript(() => {
+          waitMainScriptLoading(()=>{
+            this.context.init()
+            this.context.audio = new AudioProxy(this, 'audio')
+            this.context.clear()
+            console.log('application initialized');
+            this.$dispatch('application_initialized')
+          })
+        })
+      }
     })
   },
   computed: {
@@ -73,13 +88,31 @@ export default {
     }
   },
   methods: {
+    changeScript() {
+      console.log(this.selectedScript)
+      if ( this.selectedScript != null ) {
+        this.loadScript(()=>{
+          this.context.clear()
+        })
+      }
+    },
+    loadScript(callback) {
+      var script = document.createElement('script')
+      script.src = 'animation/' + this.selectedScript + '?' + Math.floor(Math.random() * 1000000)
+      script.onload = () => {
+        this.$dispatch('script_onload')
+        callback()
+      }
+      
+      document.head.appendChild(script)
+    },
     update() {
       this.animation.doUpdate(this.currentKey)
       this.context.canvas.renderAll();
     },
     record() {
       if ( this.isBatch || confirm('Do you want to export as video?') ) {
-        reloadMainScript(()=>{ 
+        this.loadScript(()=>{ 
           this.context.clear()
           this.context.socket.emit('start_record', {
               format: this.config.imageFormat,
@@ -142,7 +175,7 @@ export default {
       $('button.fancybox').click()
     },
     play() {
-      reloadMainScript(()=>{ 
+      this.loadScript(()=>{ 
         this.context.clear()
         if ( timer != null ) {
           clearInterval(timer)
@@ -159,7 +192,7 @@ export default {
       })
     },
     stop () {
-      this.animation.stop()
+      this.animation.doStop()
       clearInterval(timer)
       timer = null
     },

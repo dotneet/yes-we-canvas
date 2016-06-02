@@ -11,6 +11,7 @@ store.state.batch = isBatch
 var animation = new Animation()
 store.animation = animation
 window.animation = animation
+window.store = store
 
 /* eslint-disable no-new */
 const vue = new Vue({
@@ -21,11 +22,16 @@ const vue = new Vue({
 
 // for batch mode
 if ( isBatch ) {
+  window.callPhantom({ cmd: 'prepare' })
+
+  vue.$on('script_onload', () => {
+    console.log('script_onload')
+    window.callPhantom({ cmd: 'script_onload' })
+  })
+
   vue.$on('application_initialized', () => {
     console.log('event app init')
-    setTimeout(function() {
-      $('#btn-record').click();
-    }, 500);
+    window.callPhantom({ cmd: 'initialized' })
   })
 
   vue.$on('finish_record', () => {

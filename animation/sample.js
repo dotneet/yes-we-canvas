@@ -10,12 +10,11 @@ animation.init = function(config) {
   config.frameRate = 24
   config.movieLength = 5
 
-  // 矩形オブジェクトを作る
   rect = new fabric.Rect({
     left: 100,
     top: 100,
     fill: 'red',
-    width: 60,
+    width: 50,
     height: 50
   });
   this.canvas.add(rect);
