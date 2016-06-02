@@ -4,8 +4,7 @@
  */
 var rect = null;
 animation.init = function(config) {
-  console.log('INIT')
-  this.audio.setSource('http://localhost:8000/sample.mp3')
+  //this.audio.setSource('sample.mp3')
   config.width = 320
   config.height = 240
   config.frameRate = 24
@@ -29,9 +28,9 @@ animation.init = function(config) {
 }
 
 animation.update = function(key) {
-  if ( key == 1 ) {
-    this.audio.play()
-  }
+  //if ( key == 1 ) {
+  //  this.audio.play()
+  //}
 
   rect.left = 100 + key;
   rect.angle = key;
