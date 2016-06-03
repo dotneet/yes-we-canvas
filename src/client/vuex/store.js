@@ -11,7 +11,8 @@ const state = {
     height: 300,
     movieLength: 1,
     frameRate: 30,
-    imageFormat: 'image/jpeg'
+    imageFormat: 'image/jpeg',
+    videoFormat: 'mp4'
   },
   batch: false,
   script: null,

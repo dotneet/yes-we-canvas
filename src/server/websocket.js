@@ -42,6 +42,7 @@ module.exports = function (io, serverConfig) {
       frameRate: 30,
       length: null,
       imageFormat: null,
+      videoFormat: 'mpg',
       sound: null
     }
   }
@@ -55,6 +56,7 @@ module.exports = function (io, serverConfig) {
       recordContext.imageFormat = data.format;
       recordContext.frameRate = data.frameRate;
       recordContext.movieLength = data.movieLength;
+      recordContext.videoFormat = data.videoFormat;
 
       fs.exists(outputDir, (exists) => {
         if ( exists ) {
@@ -127,7 +129,7 @@ module.exports = function (io, serverConfig) {
     if ( soundFile !== null ) {
       soundArgs = util.format(' -i %s -t ', soundFile, recordContext.movieLength)
     }
-    var cmd = util.format('%s -y -r %d -i %s %s -r %d %s/output.mp4', ffmpegCmd, fps, inputField, soundArgs, fps, wwwDir)
+    var cmd = util.format('%s -y -r %d -i %s %s -r %d %s/output.%s', ffmpegCmd, fps, inputField, soundArgs, fps, wwwDir, recordContext.videoFormat)
     console.log("")
     console.log(cmd)
     child_process.exec(cmd,{},(err,stdout,stderr) => {

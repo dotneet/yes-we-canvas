@@ -117,7 +117,8 @@ export default {
           this.context.socket.emit('start_record', {
               format: this.config.imageFormat,
               frameRate: this.config.frameRate,
-              movieLength: this.config.movieLength
+              movieLength: this.config.movieLength,
+              videoFormat: this.config.videoFormat
             }, ()=> {
               this.saveAllFrames()
             })
@@ -169,7 +170,7 @@ export default {
       })
     },
     showVideo() {
-      this.videoSource = 'output.mp4?' + Math.floor(100000*Math.random())
+      this.videoSource = 'output.' + this.config.videoFormat + '?' + Math.floor(100000*Math.random())
       var elm = $('#video')[0]
       elm.load()
       $('button.fancybox').click()
