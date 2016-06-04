@@ -65,8 +65,9 @@ export default {
       complete: (response) => {
         console.log(response)
         this.scripts = response.responseJSON.files
-        if ( this.$store.state.script !== null ) {
-          this.selectedScript = this.$store.state.script
+        var batchParams = this.$store.state.batchParams
+        if ( batchParams !== null && batchParams.script !== null ) {
+          this.selectedScript = batchParams.script
         } else {
           this.selectedScript = this.scripts[0]
         }
@@ -101,6 +102,10 @@ export default {
       script.src = 'animation/' + this.selectedScript + '?' + Math.floor(Math.random() * 1000000)
       script.onload = () => {
         this.$dispatch('script_onload')
+        var batchParams = this.$store.state.batchParams
+        if ( batchParams !== null && batchParams.params !== null ) {
+          window.animation.params = this.$store.state.batchParams.params
+        }
         callback()
       }
       
@@ -114,14 +119,11 @@ export default {
       if ( this.isBatch || confirm('Do you want to export as video?') ) {
         this.loadScript(()=>{ 
           this.context.clear()
-          this.context.socket.emit('start_record', {
-              format: this.config.imageFormat,
-              frameRate: this.config.frameRate,
-              movieLength: this.config.movieLength,
-              videoFormat: this.config.videoFormat
-            }, ()=> {
+          var batchParams = this.$store.state.batchParams
+          var options = this.config;
+          this.context.socket.emit('start_record', {options:options, batchParams:batchParams} , ()=> {
               this.saveAllFrames()
-            })
+          })
         })
       }
     },

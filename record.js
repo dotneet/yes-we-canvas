@@ -29,7 +29,7 @@ page.onError = function (msg,trace) {
 page.onCallback = function (data) {
   if ( data.cmd === "prepare" ) {
     if ( additionalParams !== null ) {
-      var s = "function(){ window.store.state.script = '" + additionalParams.script + "'; }";
+      var s = "function(){ window.store.state.batchParams = JSON.parse('" + JSON.stringify(additionalParams) + "'); }";
       page.evaluateJavaScript(s)
     }
     return additionalParams
@@ -38,10 +38,7 @@ page.onCallback = function (data) {
       $('#btn-record').click();
     })
   } else if ( data.cmd === "script_onload" ) {
-    if ( additionalParams !== null ) {
-      var s = "function(){ window.animation.params = JSON.parse('" + JSON.stringify(additionalParams.params) + "'); }";
-      page.evaluateJavaScript(s)
-    }
+    // do nothing.
   } else if ( data.cmd === "exit" ) {
     console.log("exit");
     phantom.exit();

@@ -12,9 +12,11 @@ const state = {
     movieLength: 1,
     frameRate: 30,
     imageFormat: 'image/jpeg',
-    videoFormat: 'mp4'
+    videoFormat: 'mp4',
+    outputPath: null
   },
   batch: false,
+  batchParams: null,
   script: null,
   animation: null,
   currentKey: 0

@@ -28,39 +28,55 @@ function download(url, path, callback) {
   });
 }
 
+var RecordingContext = function (config) {
+  this.serverConfig = config
+  this.index = 0
+
+  this.options = {
+    frameRate: 30,
+    movieLength: null,
+    imageFormat: null,
+    videoFormat: 'mpg',
+    sound: null,
+    outputPath: null
+  }
+}
+
+RecordingContext.prototype.getOutputPath = function () {
+  if ( this.options['outputPath'] === null ) {
+    return this.serverConfig.wwwDir + '/output.' + this.options.videoFormat
+  } else {
+    return this.options['outputPath']
+  }
+}
+
 
 module.exports = function (io, serverConfig) {
   const outputDir = serverConfig.outputDir
   const wwwDir = serverConfig.wwwDir
 
-  var recordIndex = 0;
-  var recordContext = {}
-
-  function initRecordContext() {
-    recordIndex = 0;
-    recordContext = {
-      frameRate: 30,
-      length: null,
-      imageFormat: null,
-      videoFormat: 'mpg',
-      sound: null
-    }
-  }
+  var context = new RecordingContext(serverConfig)
 
   io.on('connection', function(socket){
     console.log('connected');
 
     socket.on('start_record', function(data, cb) {
       console.log('start_record')
-      initRecordContext()
-      recordContext.imageFormat = data.format;
-      recordContext.frameRate = data.frameRate;
-      recordContext.movieLength = data.movieLength;
-      recordContext.videoFormat = data.videoFormat;
+      context = new RecordingContext(serverConfig)
+      for (var attrname in data.options ) { 
+        if ( data.options[attrname] !== null ) {
+          context.options[attrname] = data.options[attrname];
+        }
+      }
+      if ( data.batchParams !== null ) {
+        if ( data.batchParams.output !== undefined ) {
+          context.options.outputPath = data.batchParams.output
+        }
+      }
 
       fs.exists(outputDir, (exists) => {
         if ( exists ) {
-          var ext = mimeTypeToExtension(recordContext.imageFormat)
+          var ext = mimeTypeToExtension(context.options.imageFormat)
           glob(outputDir + "/*." + ext, null, (er,files)=>{
             files.forEach((f)=>{
               fs.unlink(f)
@@ -76,9 +92,9 @@ module.exports = function (io, serverConfig) {
     });
 
     socket.on('record', function(data,cb) {
-      recordIndex++;
+      context.index++;
       if ( Buffer.isBuffer(data) ) {
-        var name = outputDir + '/' + recordIndex + "." + mimeTypeToExtension(recordContext.imageFormat);
+        var name = outputDir + '/' + context.index + "." + mimeTypeToExtension(context.options.imageFormat);
         fs.writeFile(name, data, function(err) {
           if ( err != null ) {
             console.log(err);
@@ -96,15 +112,16 @@ module.exports = function (io, serverConfig) {
       data.commands.forEach((cmd) => {
         if ( cmd.name === "source" ) {
           console.log('set sound source:' + cmd.src)
-          recordContext.sound = cmd.src
+          context.options.sound = cmd.src
         }
       })
       next()
     })
 
     socket.on('create_movie', function(data,cb) {
-      if ( recordContext.sound !== null ) {
-        var url = recordContext.sound
+      console.log(context.options)
+      if ( context.options.sound !== null ) {
+        var url = context.options.sound
         if ( url.indexOf('http://') !== -1 || url.indexOf('https://') !== -1 ) {
           var soundOutputPath = util.format('%s/download.mp3', outputDir)
           console.log('download from: ' + url)
@@ -121,15 +138,15 @@ module.exports = function (io, serverConfig) {
   })
 
   function createMovie(cb, soundFile) {
-    var ext = mimeTypeToExtension(recordContext.imageFormat);
+    var ext = mimeTypeToExtension(context.options.imageFormat);
     var inputField = util.format('%s/%%d.%s', outputDir, ext)
     var ffmpegCmd = serverConfig.ffmpegCmd
-    var fps = recordContext.frameRate
+    var fps = context.options.frameRate
     var soundArgs = ''
     if ( soundFile !== null ) {
-      soundArgs = util.format(' -i %s -t ', soundFile, recordContext.movieLength)
+      soundArgs = util.format(' -i %s -t ', soundFile, context.options.movieLength)
     }
-    var cmd = util.format('%s -y -r %d -i %s %s -r %d %s/output.%s', ffmpegCmd, fps, inputField, soundArgs, fps, wwwDir, recordContext.videoFormat)
+    var cmd = util.format('%s -y -r %d -i %s %s -r %d ', ffmpegCmd, fps, inputField, soundArgs, fps, context.getOutputPath())
     console.log("")
     console.log(cmd)
     child_process.exec(cmd,{},(err,stdout,stderr) => {
