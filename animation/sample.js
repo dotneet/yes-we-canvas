@@ -3,8 +3,12 @@
  * this.audio: Audio
  */
 var rect = null;
+animation.params = {
+  width: 100,
+  height: 100
+}
+
 animation.init = function(config) {
-  //this.audio.setSource('sample.mp3')
   config.width = 320
   config.height = 240
   config.frameRate = 24
@@ -14,8 +18,8 @@ animation.init = function(config) {
     left: 100,
     top: 100,
     fill: 'red',
-    width: 50,
-    height: 50
+    width: this.params.width,
+    height: this.params.height
   });
   this.canvas.add(rect);
 
@@ -27,9 +31,9 @@ animation.init = function(config) {
 }
 
 animation.update = function(key) {
-  //if ( key == 1 ) {
-  //  this.audio.play()
-  //}
+  if ( key == 1 ) {
+    this.audio.play('bgm01.mp3')
+  }
 
   rect.left = 100 + key;
   rect.angle = key;

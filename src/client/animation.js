@@ -7,6 +7,10 @@ class AnimationContext {
   constructor (context) {
     this.canvas = context.canvas
     this.audio = context.audio
+    this.audio1 = context.audio1
+    this.audio2 = context.audio2
+    this.audio3 = context.audio3
+    this.audio4 = context.audio4
   }
 }
 
@@ -31,7 +35,10 @@ export default class Animation {
   }
 
   doStop() {
-    this.context.audio.reset()
+    this.context.audio1.reset()
+    this.context.audio2.reset()
+    this.context.audio3.reset()
+    this.context.audio4.reset()
     this.stop.apply(this.context)
   }
 

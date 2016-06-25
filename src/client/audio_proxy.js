@@ -3,30 +3,32 @@ export default class AudioProxy {
     this.app = app
     this.elmId = elmId
     this.element = $('#' + elmId)[0]
-    this.commands = []
+    this.source = null
   }
   setSource(source) {
+    this.source = source
     $('#' + this.elmId).attr('src', source + "?" + Math.floor(Math.random() * 1000000))
-    this.commands.push({name:"source", src: source, key: this.app.currentKey})
+    // this.app.context.audioCommands.push({name:"source", src: source, key: this.app.currentKey})
   }
   init() {
-    this.commands = []
   }
-  play() {
-    if ( this.element.paused ) {
+  play(source) {
+    if ( this.source !== source || this.element.paused ) {
+      this.setSource(source)
       if ( !this.app.isBatch ) {
         this.element.play()
       }
-      this.commands.push({name:"play", key: this.app.currentKey})
+      this.app.context.audioCommands.push({name:"play", src: this.source, key: this.app.currentKey})
     }
   }
   pause() {
     if ( !this.app.isBatch ) {
       this.element.pause()
     }
-    this.commands.push({name:"pause", key: this.app.currentKey})
+    this.app.context.audioCommands.push({name:"pause", src: this.source, key: this.app.currentKey})
   }
   reset() {
+    console.log('reset:' + this.elmId)
     if ( !this.app.isBatch ) {
       this.element.pause()
       this.element.currentTime = 0

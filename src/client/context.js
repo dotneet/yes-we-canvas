@@ -6,6 +6,11 @@ export default class Context {
     this.animation = animation
     this.canvas = null
     this.audio = null
+    this.audio1 = null
+    this.audio2 = null
+    this.audio3 = null
+    this.audio4 = null
+    this.audioCommands = []
   }
 
   init() {
@@ -42,6 +47,7 @@ export default class Context {
     this.animation.doInit(this, store.state.config);
     this.canvas.setWidth(store.state.config.width);
     this.canvas.setHeight(store.state.config.height);
+    this.audioCommands = []
     this.app.$store.dispatch('SET_CURRENT_KEY', 0)
   }
 }

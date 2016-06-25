@@ -22,7 +22,10 @@
       </div>
     </div>
     <video id="video" :src="videoSource" :width="canvasWidth" :height="canvasHeight" controls style="display: none;">Video tag is not supported in this browser.</video>
-    <audio id="audio" :src="audioSource" style="display: none;">Audio tag is not supported in this browser.</audio>
+    <audio id="audio1" :src="audioSource1" style="display: none;">Audio tag is not supported in this browser.</audio>
+    <audio id="audio2" :src="audioSource2" style="display: none;">Audio tag is not supported in this browser.</audio>
+    <audio id="audio3" :src="audioSource3" style="display: none;">Audio tag is not supported in this browser.</audio>
+    <audio id="audio4" :src="audioSource4" style="display: none;">Audio tag is not supported in this browser.</audio>
   </div>
 </template>
 
@@ -74,7 +77,11 @@ export default {
         this.loadScript(() => {
           waitMainScriptLoading(()=>{
             this.context.init()
-            this.context.audio = new AudioProxy(this, 'audio')
+            this.context.audio = new AudioProxy(this, 'audio1')
+            this.context.audio1 = this.context.audio
+            this.context.audio2 = new AudioProxy(this, 'audio2')
+            this.context.audio3 = new AudioProxy(this, 'audio3')
+            this.context.audio4 = new AudioProxy(this, 'audio4')
             this.context.clear()
             console.log('application initialized');
             this.$dispatch('application_initialized')
@@ -132,8 +139,8 @@ export default {
       var record = null;
       var c = document.getElementById('main-canvas')
       record = () => {
-        this.$store.dispatch('NEXT_KEY')
         this.update()
+        this.$store.dispatch('NEXT_KEY')
         c.toBlob((blob) => {
           this.context.socket.emit('record', blob, () => {
             if ( this.currentKey < totalFrame ) {
@@ -150,8 +157,8 @@ export default {
       record()
     },
     sendSoundCommand(cb) {
-      if ( this.context.audio.commands.length > 0 ) {
-        this.context.socket.emit('set_sound', {commands: this.context.audio.commands}, () => {
+      if ( this.context.audioCommands.length > 0 ) {
+        this.context.socket.emit('set_sound', {commands: this.context.audioCommands}, () => {
           cb()
         })
       } else {
@@ -186,8 +193,8 @@ export default {
 
         const totalFrame = this.totalFrame
         timer = setInterval(() => {
-          this.$store.dispatch('NEXT_KEY')
           this.update()
+          this.$store.dispatch('NEXT_KEY')
           if ( this.currentKey >= totalFrame ) {
             this.stop()
           }
@@ -204,8 +211,8 @@ export default {
       this.update()
     },
     next() {
-      this.$store.dispatch('NEXT_KEY')
       this.update()
+      this.$store.dispatch('NEXT_KEY')
     }
   },
   vuex: {
