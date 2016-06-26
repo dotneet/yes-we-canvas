@@ -43,11 +43,25 @@ export default class Context {
     this.canvas.clear();
     this.canvas.setBackgroundColor('#ffffff')
     this.canvas.setBackgroundImage(null)
-    var store = this.app.$store
-    this.animation.doInit(this, store.state.config);
-    this.canvas.setWidth(store.state.config.width);
-    this.canvas.setHeight(store.state.config.height);
     this.audioCommands = []
-    this.app.$store.dispatch('SET_CURRENT_KEY', 0)
+    var store = this.app.$store
+    var obj = this.animation.doInit(this, store.state.config);
+    console.log('doInit')
+    console.log(obj)
+    var me = this;
+    if ( obj != null && (typeof obj) === 'object' && 'then' in obj ) {
+      return obj.then(function() {
+        me.canvas.setWidth(store.state.config.width);
+        me.canvas.setHeight(store.state.config.height);
+        me.app.$store.dispatch('SET_CURRENT_KEY', 0)
+      })
+    } else {
+      return new Promise(function(resolve, reject) {
+        me.canvas.setWidth(store.state.config.width);
+        me.canvas.setHeight(store.state.config.height);
+        me.app.$store.dispatch('SET_CURRENT_KEY', 0)
+        resolve()
+      })
+    }
   }
 }

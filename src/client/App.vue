@@ -82,9 +82,11 @@ export default {
             this.context.audio2 = new AudioProxy(this, 'audio2')
             this.context.audio3 = new AudioProxy(this, 'audio3')
             this.context.audio4 = new AudioProxy(this, 'audio4')
-            this.context.clear()
-            console.log('application initialized');
-            this.$dispatch('application_initialized')
+            var me = this
+            this.context.clear().then(function(){
+              console.log('application initialized after Promise');
+              me.$dispatch('application_initialized')
+            })
           })
         })
       }
@@ -125,11 +127,13 @@ export default {
     record() {
       if ( this.isBatch || confirm('Do you want to export as video?') ) {
         this.loadScript(()=>{ 
-          this.context.clear()
-          var batchParams = this.$store.state.batchParams
-          var options = this.config;
-          this.context.socket.emit('start_record', {options:options, batchParams:batchParams} , ()=> {
-              this.saveAllFrames()
+          var me = this;
+          this.context.clear().then(function() {
+            var batchParams = me.$store.state.batchParams
+            var options = me.config;
+            me.context.socket.emit('start_record', {options:options, batchParams:batchParams} , ()=> {
+                me.saveAllFrames()
+            })
           })
         })
       }

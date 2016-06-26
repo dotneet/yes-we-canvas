@@ -27,7 +27,7 @@ export default class Animation {
   doInit(context, config) {
     this.context = new AnimationContext(context)
     this.context.params = clone(this.params)
-    this.init.apply(this.context, [config])
+    return this.init.apply(this.context, [config])
   }
 
   doUpdate(key) {

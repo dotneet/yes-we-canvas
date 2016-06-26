@@ -2,6 +2,7 @@ import Vue from 'vue'
 import App from './App.vue'
 import store from './vuex/store.js'
 import Animation from './animation.js'
+import ES6Promise from 'es6-promise'
 
 Vue.config.debug = true
 
@@ -12,6 +13,9 @@ var animation = new Animation()
 store.animation = animation
 window.animation = animation
 window.store = store
+if ( window.Promise === undefined ) {
+  window.Promise = ES6Promise.Promise
+}
 
 /* eslint-disable no-new */
 const vue = new Vue({
