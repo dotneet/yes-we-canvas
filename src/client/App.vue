@@ -33,6 +33,7 @@
 
 import Context from './context.js';
 import AudioProxy from './audio_proxy.js';
+import _ from 'lodash'
 
 var timer = null
 
@@ -113,7 +114,7 @@ export default {
         this.$dispatch('script_onload')
         var batchParams = this.$store.state.batchParams
         if ( batchParams !== null && batchParams.params !== null ) {
-          window.animation.params = this.$store.state.batchParams.params
+          window.animation.params = _.merge(window.animation.params, this.$store.state.batchParams.params)
         }
         callback()
       }
