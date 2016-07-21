@@ -12,6 +12,26 @@ class AnimationContext {
     this.audio3 = context.audio3
     this.audio4 = context.audio4
   }
+
+  add(canvasElement) {
+    this.canvas.add(canvasElement)
+  }
+
+  setBackground(img) {
+    this.canvas.setBackgroundImage(img)
+  }
+
+  loadImage(url,options=null) {
+    return new Promise(function(resolve,reject) {
+      fabric.Image.fromURL(url, function(img) {
+        resolve(img)
+      }, options)
+    })
+  }
+
+  createText(text, options = null) {
+    return new fabric.Text(text, options);
+  }
 }
 
 export default class Animation {
