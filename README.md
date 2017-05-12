@@ -20,7 +20,7 @@ npm run build
 ## Launch server
 
 ```bash
-node server
+npm run server
 ```
 
 ## Write an animation
