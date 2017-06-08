@@ -1,6 +1,6 @@
 'use strict';
 
-var serverConfig = require('../../config.js')
+var serverConfig = require('../../app-config.js')
 var express = require('express');
 var path = require('path');
 var app = express();

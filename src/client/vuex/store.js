@@ -23,13 +23,19 @@ const state = {
 }
 
 const actions = {
-    next_key: 'NEXT_KEY',
-    prev_key: 'PREV_KEY'
+  next_key: 'NEXT_KEY',
+  prev_key: 'PREV_KEY'
 }
 
 export default new Vuex.Store({
   state: state,
   mutations: mutations,
-  actions: actions
+  actions: actions,
+  getters: {
+    config: state => { return state.config },
+    currentKey: state => { return state.currentKey },
+    canvasWidth: state => { return state.config.width },
+    canvasHeight: state => { return state.config.height }
+  }
 })
 

@@ -22,29 +22,30 @@
       </div>
     </div>
     <video id="video" :src="videoSource" :width="canvasWidth" :height="canvasHeight" controls style="display: none;">Video tag is not supported in this browser.</video>
-    <audio id="audio1" :src="audioSource1" style="display: none;">Audio tag is not supported in this browser.</audio>
-    <audio id="audio2" :src="audioSource2" style="display: none;">Audio tag is not supported in this browser.</audio>
-    <audio id="audio3" :src="audioSource3" style="display: none;">Audio tag is not supported in this browser.</audio>
-    <audio id="audio4" :src="audioSource4" style="display: none;">Audio tag is not supported in this browser.</audio>
+    <audio id="audio1" style="display: none;">Audio tag is not supported in this browser.</audio>
+    <audio id="audio2" style="display: none;">Audio tag is not supported in this browser.</audio>
+    <audio id="audio3" style="display: none;">Audio tag is not supported in this browser.</audio>
+    <audio id="audio4" style="display: none;">Audio tag is not supported in this browser.</audio>
   </div>
 </template>
 
 <script>
 
-import Context from './context.js';
-import AudioProxy from './audio_proxy.js';
+import Context from './context.js'
+import AudioProxy from './audio_proxy.js'
 import _ from 'lodash'
+import {mapGetters} from 'vuex'
 
-var timer = null
+let timer = null
+let $ = window.$
 
-function waitMainScriptLoading(cb) {
-  var f;
-  f = () => {
-     if ( animation.loaded() ) {
-       cb()
-     } else {
-       setTimeout(f, 200)
-     }
+function waitMainScriptLoading (cb) {
+  let f = () => {
+    if (window.animation.loaded()) {
+      cb()
+    } else {
+      setTimeout(f, 200)
+    }
   }
   setTimeout(f, 200)
 }
@@ -53,16 +54,16 @@ export default {
   name: 'App',
   data () {
     var data = {
-        videoSource: 'output.mp4',
-        context: new Context(this, io(), window.animation),
-        animation: window.animation,
-        isBatch: this.$store.state.batch,
-        scripts: [],
-        selectedScript: null
-      };
-    return data;
+      videoSource: 'output.mp4',
+      context: new Context(this, window.io(), window.animation),
+      animation: window.animation,
+      isBatch: this.$store.state.batch,
+      scripts: [],
+      selectedScript: null
+    }
+    return data
   },
-  ready () {
+  mounted () {
     $.ajax({
       url: '/animation/',
       dataType: 'json',
@@ -70,13 +71,13 @@ export default {
         console.log(response)
         this.scripts = response.responseJSON.files
         var batchParams = this.$store.state.batchParams
-        if ( batchParams !== null && batchParams.script !== null ) {
+        if (batchParams !== null && batchParams.script !== null) {
           this.selectedScript = batchParams.script
         } else {
           this.selectedScript = this.scripts[0]
         }
         this.loadScript(() => {
-          waitMainScriptLoading(()=>{
+          waitMainScriptLoading(() => {
             this.context.init()
             this.context.audio = new AudioProxy(this, 'audio1')
             this.context.audio1 = this.context.audio
@@ -84,9 +85,9 @@ export default {
             this.context.audio3 = new AudioProxy(this, 'audio3')
             this.context.audio4 = new AudioProxy(this, 'audio4')
             var me = this
-            this.context.clear().then(function(){
-              console.log('application initialized after Promise');
-              me.$dispatch('application_initialized')
+            this.context.clear().then(function () {
+              console.log('application initialized after Promise')
+              me.$emit('application_initialized')
             })
           })
         })
@@ -94,61 +95,62 @@ export default {
     })
   },
   computed: {
+    ...mapGetters(['config', 'currentKey', 'canvasWidth', 'canvasHeight']),
     totalFrame () {
       return this.config.movieLength * this.config.frameRate
     }
   },
   methods: {
-    changeScript() {
+    changeScript () {
       console.log(this.selectedScript)
-      if ( this.selectedScript != null ) {
-        this.loadScript(()=>{
+      if (this.selectedScript != null) {
+        this.loadScript(() => {
           this.context.clear()
         })
       }
     },
-    loadScript(callback) {
+    loadScript (callback) {
       var script = document.createElement('script')
       script.src = 'animation/' + this.selectedScript + '?' + Math.floor(Math.random() * 1000000)
       script.onload = () => {
-        this.$dispatch('script_onload')
+        this.$emit('script_onload')
         var batchParams = this.$store.state.batchParams
-        if ( batchParams !== null && batchParams.params !== null ) {
+        if (batchParams !== null && batchParams.params !== null) {
           window.animation.params = _.merge(window.animation.params, this.$store.state.batchParams.params)
         }
         callback()
       }
-      
+
       document.head.appendChild(script)
     },
-    update() {
+    update () {
       this.animation.doUpdate(this.currentKey)
-      this.context.canvas.renderAll();
+      this.context.canvas.renderAll()
     },
-    record() {
-      if ( this.isBatch || confirm('Do you want to export as video?') ) {
-        this.loadScript(()=>{ 
-          var me = this;
-          this.context.clear().then(function() {
-            var batchParams = me.$store.state.batchParams
-            var options = me.config;
-            me.context.socket.emit('start_record', {options:options, batchParams:batchParams} , ()=> {
-                me.saveAllFrames()
+    record () {
+      if (this.isBatch || confirm('Do you want to export as video?')) {
+        this.loadScript(() => {
+          let me = this
+          this.context.clear().then(function () {
+            let batchParams = me.$store.state.batchParams
+            let options = me.config
+            me.context.socket.emit('start_record', {options: options, batchParams: batchParams}, () => {
+              me.saveAllFrames()
             })
           })
         })
       }
     },
-    saveAllFrames() {
+    saveAllFrames () {
       const totalFrame = this.totalFrame
-      var record = null;
+      var record = null
       var c = document.getElementById('main-canvas')
       record = () => {
         this.update()
-        this.$store.dispatch('NEXT_KEY')
+        this.$store.commit('NEXT_KEY')
         c.toBlob((blob) => {
           this.context.socket.emit('record', blob, () => {
-            if ( this.currentKey < totalFrame ) {
+            if (this.currentKey < totalFrame) {
               record()
             } else {
               this.stop()
@@ -161,8 +163,8 @@ export default {
       }
       record()
     },
-    sendSoundCommand(cb) {
-      if ( this.context.audioCommands.length > 0 ) {
+    sendSoundCommand (cb) {
+      if (this.context.audioCommands.length > 0) {
         this.context.socket.emit('set_sound', {commands: this.context.audioCommands}, () => {
           cb()
         })
@@ -170,12 +172,12 @@ export default {
         cb()
       }
     },
-    createMovie() {
-      this.context.socket.emit('create_movie', {}, (err,stdout,stderr) => {
-        if ( this.isBatch ) {
-          this.$dispatch('finish_record')
+    createMovie () {
+      this.context.socket.emit('create_movie', {}, (err, stdout, stderr) => {
+        if (this.isBatch) {
+          this.$emit('finish_record')
         } else {
-          if ( err !== null ) {
+          if (err !== null) {
             alert(stderr)
           } else {
             this.showVideo()
@@ -183,24 +185,24 @@ export default {
         }
       })
     },
-    showVideo() {
-      this.videoSource = 'output.' + this.config.videoFormat + '?' + Math.floor(100000*Math.random())
-      var elm = $('#video')[0]
+    showVideo () {
+      this.videoSource = 'output.' + this.config.videoFormat + '?' + Math.floor(100000 * Math.random())
+      let elm = $('#video')[0]
       elm.load()
       $('button.fancybox').click()
     },
-    play() {
-      this.loadScript(()=>{ 
+    play () {
+      this.loadScript(() => {
         this.context.clear()
-        if ( timer != null ) {
+        if (timer !== null) {
           clearInterval(timer)
         }
 
         const totalFrame = this.totalFrame
         timer = setInterval(() => {
           this.update()
-          this.$store.dispatch('NEXT_KEY')
-          if ( this.currentKey >= totalFrame ) {
+          this.$store.commit('NEXT_KEY')
+          if (this.currentKey >= totalFrame) {
             this.stop()
           }
         }, 1000 / this.config.frameRate)
@@ -211,29 +213,13 @@ export default {
       clearInterval(timer)
       timer = null
     },
-    prev() {
-      this.$store.dispatch('PREV_KEY')
+    prev () {
+      this.$store.commit('PREV_KEY')
       this.update()
     },
-    next() {
+    next () {
       this.update()
-      this.$store.dispatch('NEXT_KEY')
-    }
-  },
-  vuex: {
-    getters: {
-      config(state) {
-        return state.config
-      },
-      currentKey(state) {
-        return state.currentKey
-      },
-      canvasWidth(state) {
-        return state.config.width
-      },
-      canvasHeight(state) {
-        return state.config.height
-      }
+      this.$store.commit('NEXT_KEY')
     }
   }
 }

@@ -1,5 +1,3 @@
-import Vue from 'vue'
-
 export default {
   SET_CURRENT_KEY (state) {
     state.currentKey = 0

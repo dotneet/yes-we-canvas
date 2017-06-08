@@ -21,7 +21,6 @@
     "jquery": "^2.2.4",
     "socket.io-client": "^1.4.6",
     "blueimp-canvas-to-blob": "^3.3.0",
-    "material-design-icons": "^2.2.3",
     "fancybox": "^2.1.5",
     "fabric.js": "fabric#^1.6.3",
     "lodash": "^4.13.1"

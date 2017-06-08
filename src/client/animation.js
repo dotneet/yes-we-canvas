@@ -1,6 +1,6 @@
 import clone from './clone.js'
 
-const defaultInitFunction =  () => { console.log('%cinit() is undefined', 'color: red') }
+const defaultInitFunction = () => { console.log('%cinit() is undefined', 'color: red') }
 const defaultUpdateFunction = () => { console.log('%cinit() is undefined', 'color: red') }
 
 class AnimationContext {
@@ -13,30 +13,30 @@ class AnimationContext {
     this.audio4 = context.audio4
   }
 
-  add(canvasElement) {
+  add (canvasElement) {
     this.canvas.add(canvasElement)
   }
 
-  setBackground(img) {
+  setBackground (img) {
     this.canvas.setBackgroundImage(img)
   }
 
-  loadImage(url,options=null) {
-    return new Promise(function(resolve,reject) {
-      fabric.Image.fromURL(url, function(img) {
+  loadImage (url, options = null) {
+    return new Promise(function (resolve, reject) {
+      window.fabric.Image.fromURL(url, function (img) {
         resolve(img)
       }, options)
     })
   }
 
-  createText(text, options = null) {
-    return new fabric.Text(text, options);
+  createText (text, options = null) {
+    return new window.fabric.Text(text, options)
   }
 }
 
 export default class Animation {
 
-  constructor() {
+  constructor () {
     this.params = {}
     this.init = defaultInitFunction
     this.update = defaultUpdateFunction
@@ -44,17 +44,17 @@ export default class Animation {
     this.context = null
   }
 
-  doInit(context, config) {
+  doInit (context, config) {
     this.context = new AnimationContext(context)
     this.context.params = clone(this.params)
     return this.init.apply(this.context, [config])
   }
 
-  doUpdate(key) {
+  doUpdate (key) {
     this.update.apply(this.context, [key])
   }
 
-  doStop() {
+  doStop () {
     this.context.audio1.reset()
     this.context.audio2.reset()
     this.context.audio3.reset()
@@ -62,8 +62,8 @@ export default class Animation {
     this.stop.apply(this.context)
   }
 
-  loaded() {
-    if ( this.init !== defaultInitFunction ) {
+  loaded () {
+    if (this.init !== defaultInitFunction) {
       return true
     }
     return false
