@@ -1,55 +1,59 @@
-'use strict';
 /**
  * This script make a movie file.
- * It is executed by phantomjs.
  */
 
-var system = require('system');
-var page = require('webpage').create();
-var fs = require('fs');
+const Chromy = require('chromy')
+const fs = require('fs')
 
-var args = system.args;
+const args = process.argv
 
-var additionalParams = null;
-if ( args.length > 1 ) {
-  var file = args[1];
-  var stream = fs.open(file, 'r');
-  additionalParams = JSON.parse(stream.read())
+var additionalParams = null
+if ( args.length > 2 ) {
+  var file = args[2];
+  var json = fs.readFileSync(file);
+  additionalParams = JSON.parse(json)
 }
 
-page.onConsoleMessage = function(msg, lineNum, sourceId) {
-  console.log('Client Message:' + msg);
-};
+const chromy = new Chromy()
 
-page.onError = function (msg,trace) {
-  console.log(msg);
-  console.log(trace);
-};
+async function onReceive (params) {
+  console.log('receive:', params)
+  let data = params[0]
 
-page.onCallback = function (data) {
   if ( data.cmd === "prepare" ) {
     if ( additionalParams !== null ) {
-      var s = "function(){ window.store.state.batchParams = JSON.parse('" + JSON.stringify(additionalParams) + "'); }";
-      page.evaluateJavaScript(s)
+      var s = "window.store.state.batchParams = JSON.parse('" + JSON.stringify(additionalParams) + "')";
+      await chromy.evaluate(s)
     }
     return additionalParams
   } else if ( data.cmd === "initialized" ) {
-    page.evaluate(function() {
+    await chromy.evaluate(function() {
       $('#btn-record').click();
     })
   } else if ( data.cmd === "script_onload" ) {
     // do nothing.
   } else if ( data.cmd === "exit" ) {
     console.log("exit");
-    phantom.exit();
-    return "";
+    await chromy.close()
   } else {
     console.log("unknown command");
     console.log(data);
   }
-};
+}
 
-page.open('http://localhost:8000/index.html', function(status) {
-  console.log("complete page loading.");
-});
+chromy.chain()
+      .console(msg => {
+        console.log(msg)
+      })
+      .goto('http://localhost:8000/index.html')
+      .sleep(100)
+      .receiveMessage(onReceive)
+      .sleep(100)
+      .evaluate(async _ => {
+        await window.onBatch()
+      })
+      .sleep(4000)
+      .end()
+      .then(_ => chromy.close())
+      .catch(e => {console.log(e); chromy.close()})
 

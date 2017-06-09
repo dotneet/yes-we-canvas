@@ -57,50 +57,58 @@ export default {
       videoSource: 'output.mp4',
       context: new Context(this, window.io(), window.animation),
       animation: window.animation,
-      isBatch: this.$store.state.batch,
       scripts: [],
       selectedScript: null
     }
     return data
   },
   mounted () {
-    $.ajax({
-      url: '/animation/',
-      dataType: 'json',
-      complete: (response) => {
-        console.log(response)
-        this.scripts = response.responseJSON.files
-        var batchParams = this.$store.state.batchParams
-        if (batchParams !== null && batchParams.script !== null) {
-          this.selectedScript = batchParams.script
-        } else {
-          this.selectedScript = this.scripts[0]
-        }
-        this.loadScript(() => {
-          waitMainScriptLoading(() => {
-            this.context.init()
-            this.context.audio = new AudioProxy(this, 'audio1')
-            this.context.audio1 = this.context.audio
-            this.context.audio2 = new AudioProxy(this, 'audio2')
-            this.context.audio3 = new AudioProxy(this, 'audio3')
-            this.context.audio4 = new AudioProxy(this, 'audio4')
-            var me = this
-            this.context.clear().then(function () {
-              console.log('application initialized after Promise')
-              me.$emit('application_initialized')
-            })
-          })
-        })
-      }
+    this.bootstrap()
+    this.$bus.$on('bootstrap', () => {
+      this.bootstrap()
     })
   },
   computed: {
     ...mapGetters(['config', 'currentKey', 'canvasWidth', 'canvasHeight']),
+    isBatch () {
+      return this.$store.state.batch
+    },
     totalFrame () {
       return this.config.movieLength * this.config.frameRate
     }
   },
   methods: {
+    bootstrap () {
+      $.ajax({
+        url: '/animation/',
+        dataType: 'json',
+        complete: (response) => {
+          console.log(response)
+          this.scripts = response.responseJSON.files
+          var batchParams = this.$store.state.batchParams
+          if (batchParams !== null && batchParams.script !== null) {
+            this.selectedScript = batchParams.script
+          } else {
+            this.selectedScript = this.scripts[0]
+          }
+          this.loadScript(() => {
+            waitMainScriptLoading(() => {
+              this.context.init()
+              this.context.audio = new AudioProxy(this, 'audio1')
+              this.context.audio1 = this.context.audio
+              this.context.audio2 = new AudioProxy(this, 'audio2')
+              this.context.audio3 = new AudioProxy(this, 'audio3')
+              this.context.audio4 = new AudioProxy(this, 'audio4')
+              var me = this
+              this.context.clear().then(function () {
+                console.log('application initialized after Promise')
+                me.$bus.$emit('application_initialized')
+              })
+            })
+          })
+        }
+      })
+    },
     changeScript () {
       console.log(this.selectedScript)
       if (this.selectedScript != null) {
@@ -113,7 +121,7 @@ export default {
       var script = document.createElement('script')
       script.src = 'animation/' + this.selectedScript + '?' + Math.floor(Math.random() * 1000000)
       script.onload = () => {
-        this.$emit('script_onload')
+        this.$bus.$emit('script_onload')
         var batchParams = this.$store.state.batchParams
         if (batchParams !== null && batchParams.params !== null) {
           window.animation.params = _.merge(window.animation.params, this.$store.state.batchParams.params)
@@ -175,7 +183,7 @@ export default {
     createMovie () {
       this.context.socket.emit('create_movie', {}, (err, stdout, stderr) => {
         if (this.isBatch) {
-          this.$emit('finish_record')
+          this.$bus.$emit('finish_record')
         } else {
           if (err !== null) {
             alert(stderr)

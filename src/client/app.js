@@ -2,11 +2,11 @@ import Vue from 'vue'
 import App from './App.vue'
 import store from './vuex/store.js'
 import Animation from './animation.js'
+import VueEventBus from 'vue-event-bus'
 
 Vue.config.debug = true
 
-var isBatch = (typeof window.callPhantom === 'function')
-store.state.batch = isBatch
+Vue.use(VueEventBus)
 
 var animation = new Animation()
 store.animation = animation
@@ -23,24 +23,28 @@ const vue = new Vue({
   store
 })
 
-// for batch mode
-if (isBatch) {
-  window.callPhantom({cmd: 'prepare'})
+window.onBatch = async () => {
+  store.state.batch = true
+  window.sendToChromy({cmd: 'prepare'})
 
-  vue.$on('script_onload', () => {
+  vue.$bus.$on('script_onload', () => {
     console.log('script_onload')
-    window.callPhantom({cmd: 'script_onload'})
+    window.sendToChromy({cmd: 'script_onload'})
   })
 
-  vue.$on('application_initialized', () => {
+  vue.$bus.$on('application_initialized', () => {
     console.log('event app init')
-    window.callPhantom({cmd: 'initialized'})
+    window.sendToChromy({cmd: 'initialized'})
   })
 
-  vue.$on('finish_record', () => {
+  vue.$bus.$on('finish_record', () => {
     console.log('finish_record')
-    window.callPhantom({cmd: 'exit'})
+    window.sendToChromy({cmd: 'exit'})
   })
+
+  console.log('BOOT1')
+  vue.$bus.$emit('bootstrap')
+  console.log('BOOT2')
 }
 
 window.jQuery(function ($) {
