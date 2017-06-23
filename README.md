@@ -1,17 +1,18 @@
 # Yes we canvas
-YWC(Yes we canvas) is a tool for writing animation in javascript and exporting as video file easily.
+
+YWC(Yes we canvas) is a tool for writing animation in javascript and exporting animation as a video file easily.
 
 # Dependencies
- - NodeJS (5.0 or later)
+
+ - NodeJS (8.0 or later)
  - ffmpeg
- - PhantomJS
+ - Chrome 60 or later
 
 # Set Up
 
 ```
-npm i -g bower webpack node-dev
-npm i
-bower i
+npm install
+bower install
 npm run build
 ```
 
@@ -56,13 +57,13 @@ key: current frame number
 ## writing a video file by command line.
 
 ```bash
-phantomjs record.js
+node record.js
 ```
 
 with parameter file.
 
 ```bash
-phantomjs record.js test.json
+node record.js test.json
 ```
 
 ### exmaple of parameter file 

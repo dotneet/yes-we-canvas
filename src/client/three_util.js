@@ -11,3 +11,9 @@ export function loadImage (image) {
   })
 }
 
+export async function createSpriteFromImage (imageUrl) {
+  const map = await loadImage(imageUrl)
+  const material = new THREE.SpriteMaterial({ map: map, color: 0xffffff, fog: true })
+  return new THREE.Sprite(material)
+}
+

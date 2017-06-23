@@ -1,5 +1,5 @@
 /**
- * this.canvas: fabric.StaticCanvas
+ * this.threeUtil: utility
  * this.audio: Audio
  */
 var rect = null;
@@ -26,16 +26,14 @@ animation.init = async function (config) {
   var line = new THREE.Line(geometry, material);
   scene.add(line);
 
-  var map = await this.threeUtil.loadImage('img/hoge.jpg')
-  var material = new THREE.SpriteMaterial({ map: map, color: 0xffffff, fog: true });
-  var sprite = new THREE.Sprite(material);
+  var sprite = await this.threeUtil.createSpriteFromImage('img/hoge.jpg')
   sprite.position.set(20, 0, 0)
   sprite.scale.set(200, 20, 10)
   scene.add(sprite);
 
   let renderer = three.renderer
   renderer.domElement.id = 'main-canvas'
-  renderer.setSize( 800, 600 );
+  renderer.setSize( config.width, config.height );
   render = three.render
   document.getElementById('main-canvas-container').innerHTML = '';
   document.getElementById('main-canvas-container').appendChild(renderer.domElement);

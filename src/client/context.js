@@ -43,8 +43,6 @@ export default class Context {
     this.audioCommands = []
     var store = this.app.$store
     var obj = this.animation.doInit(this, store.state.config)
-    console.log('doInit')
-    console.log(obj)
     var me = this
     if (obj != null && (typeof obj) === 'object' && 'then' in obj) {
       return obj.then(function () {

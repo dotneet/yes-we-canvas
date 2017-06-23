@@ -44,9 +44,7 @@ window.onBatch = async () => {
     window.sendToChromy({cmd: 'exit'})
   })
 
-  console.log('BOOT1')
   vue.$bus.$emit('bootstrap')
-  console.log('BOOT2')
 }
 
 window.jQuery(function ($) {

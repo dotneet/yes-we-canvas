@@ -23,3 +23,5 @@ npm-debug.log
 /www/*.avi
 /www/*.webm
 
+*.hot-update.js
+*.hot-update.json
