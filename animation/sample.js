@@ -7,35 +7,50 @@ animation.params = {
   width: 100,
   height: 100
 }
+var render = null
 
-animation.init = function(config) {
-  config.width = 320
-  config.height = 240
-  config.frameRate = 24
-  config.movieLength = 5
+animation.init = async function (config) {
+  config.width = 640
+  config.height = 480
+  const three = this.initThree()
+  let scene = three.scene
+  let camera = three.camera
 
-  rect = new fabric.Rect({
-    left: 100,
-    top: 100,
-    fill: 'red',
-    width: this.params.width,
-    height: this.params.height
-  });
-  this.canvas.add(rect);
+  var material = new THREE.LineBasicMaterial({ color: 0x0000ff });
 
-  var canvas = this.canvas
-  fabric.Image.fromURL('img/bg_sample01.jpg', function(img) {
-    canvas.setBackgroundImage(img);
-    canvas.renderAll();
-  });
+  var geometry = new THREE.Geometry();
+  geometry.vertices.push(new THREE.Vector3(-10, 0, 0));
+  geometry.vertices.push(new THREE.Vector3(0, 10, 0));
+  geometry.vertices.push(new THREE.Vector3(10, 0, 0));
+
+  var line = new THREE.Line(geometry, material);
+  scene.add(line);
+
+  var map = await this.threeUtil.loadImage('img/hoge.jpg')
+  var material = new THREE.SpriteMaterial({ map: map, color: 0xffffff, fog: true });
+  var sprite = new THREE.Sprite(material);
+  sprite.position.set(20, 0, 0)
+  sprite.scale.set(200, 20, 10)
+  scene.add(sprite);
+
+  let renderer = three.renderer
+  renderer.domElement.id = 'main-canvas'
+  renderer.setSize( 800, 600 );
+  render = three.render
+  document.getElementById('main-canvas-container').innerHTML = '';
+  document.getElementById('main-canvas-container').appendChild(renderer.domElement);
+
+  render()
+  this.line = line
+  this.render = render
 }
 
 animation.update = function(key) {
   if ( key == 1 ) {
     this.audio.play('bgm01.mp3')
   }
-
-  rect.left = 100 + key;
-  rect.angle = key;
+  console.log('RENDER')
+  this.line.rotation.x += 0.1
+  this.render()
 }
 

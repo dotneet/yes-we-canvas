@@ -292,9 +292,9 @@ aws4@^1.2.1:
   version "1.6.0"
   resolved "https://registry.yarnpkg.com/aws4/-/aws4-1.6.0.tgz#83ef5ca860b2b32e4a0deedee8c771b9db57471e"
 
-axe-core@2.1.7:
-  version "2.1.7"
-  resolved "https://registry.yarnpkg.com/axe-core/-/axe-core-2.1.7.tgz#4f66f2b3ee3b58ec2d3db4339dd124c5b33b79c3"
+axe-core@2.2.1:
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/axe-core/-/axe-core-2.2.1.tgz#d8fe7be13e2d80e407f96d3374ed64d5fb1c3e54"
 
 axios@^0.16.2:
   version "0.16.2"
@@ -1247,9 +1247,9 @@ chrome-devtools-frontend@1.0.422034:
   version "1.0.422034"
   resolved "https://registry.yarnpkg.com/chrome-devtools-frontend/-/chrome-devtools-frontend-1.0.422034.tgz#071c8ce14466b7653032fcd1ad1a4a68d5e3cbd9"
 
-chrome-remote-interface@^0.22.0:
-  version "0.22.0"
-  resolved "https://registry.yarnpkg.com/chrome-remote-interface/-/chrome-remote-interface-0.22.0.tgz#91a987c252929f883f60d98bf079f1ba2d3870b0"
+chrome-remote-interface@^0.23.2:
+  version "0.23.2"
+  resolved "https://registry.yarnpkg.com/chrome-remote-interface/-/chrome-remote-interface-0.23.2.tgz#f6884b44fb2087c468fcdff8393599da242ab070"
   dependencies:
     commander "2.1.x"
     ws "2.0.x"
@@ -1264,13 +1264,13 @@ chromedriver@^2.27.2:
     request "^2.81.0"
     rimraf "^2.5.4"
 
-chromy@^0.1.26:
-  version "0.1.26"
-  resolved "https://registry.yarnpkg.com/chromy/-/chromy-0.1.26.tgz#ce76a40c617b0dc962fe5898ef3c3ae37973ca5e"
+chromy@^0.2.0:
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/chromy/-/chromy-0.2.0.tgz#544a9cd4d7241849686248117884f5fafc32cb05"
   dependencies:
     async-chain-proxy "^0.1.0"
-    chrome-remote-interface "^0.22.0"
-    lighthouse "^1.6.5"
+    chrome-remote-interface "^0.23.2"
+    lighthouse "^2.1.0"
     uuid "^3.0.1"
 
 cipher-base@^1.0.0, cipher-base@^1.0.1, cipher-base@^1.0.3:
@@ -3813,7 +3813,7 @@ istanbul@^0.4.0:
     which "^1.1.1"
     wordwrap "^1.0.0"
 
-jpeg-js@^0.1.2:
+jpeg-js@0.1.2, jpeg-js@^0.1.2:
   version "0.1.2"
   resolved "https://registry.yarnpkg.com/jpeg-js/-/jpeg-js-0.1.2.tgz#135b992c0575c985cfa0f494a3227ed238583ece"
 
@@ -4053,16 +4053,17 @@ liftoff@^2.1.0:
     rechoir "^0.6.2"
     resolve "^1.1.7"
 
-lighthouse@^1.6.5:
-  version "1.6.5"
-  resolved "https://registry.yarnpkg.com/lighthouse/-/lighthouse-1.6.5.tgz#7e06a7025c8be298b6f912dbc2f15def1d4b6531"
+lighthouse@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/lighthouse/-/lighthouse-2.1.0.tgz#caa6a3993e3b22098f82f2f745e16cda84c71aa3"
   dependencies:
-    axe-core "2.1.7"
+    axe-core "2.2.1"
     chrome-devtools-frontend "1.0.422034"
     debug "2.2.0"
     devtools-timeline-model "1.1.6"
     gl-matrix "2.3.2"
     handlebars "4.0.5"
+    jpeg-js "0.1.2"
     json-stringify-safe "5.0.1"
     marked "0.3.6"
     metaviewport-parser "0.0.1"
@@ -4070,7 +4071,7 @@ lighthouse@^1.6.5:
     opn "4.0.2"
     rimraf "2.2.8"
     semver "5.3.0"
-    speedline "1.0.3"
+    speedline "1.2.0"
     update-notifier "^2.1.0"
     whatwg-url "4.0.0"
     ws "1.1.1"
@@ -6415,9 +6416,9 @@ spdx-license-ids@^1.0.2:
   version "1.2.2"
   resolved "https://registry.yarnpkg.com/spdx-license-ids/-/spdx-license-ids-1.2.2.tgz#c9df7a3424594ade6bd11900d596696dc06bac57"
 
-speedline@1.0.3:
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/speedline/-/speedline-1.0.3.tgz#ee1d98c18d583a2d8488aaded2db9334b943dbbd"
+speedline@1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/speedline/-/speedline-1.2.0.tgz#f5828dcf8e9b96a9f6c1da8ab298538820c6668d"
   dependencies:
     babar "0.0.3"
     image-ssim "^0.2.0"
@@ -6657,6 +6658,10 @@ text-encoding@0.6.4:
 text-table@^0.2.0, text-table@~0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/text-table/-/text-table-0.2.0.tgz#7f5ee823ae805207c00af2df4a84ec3fcfa570b4"
+
+three@^0.85.2:
+  version "0.85.2"
+  resolved "https://registry.yarnpkg.com/three/-/three-0.85.2.tgz#8936f89c3668f7bf12f9b085ddf5dd409916ea27"
 
 throttleit@^1.0.0:
   version "1.0.0"

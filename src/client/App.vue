@@ -5,7 +5,9 @@
         <option v-for="script in scripts" :value="script">{{ script }}</option>
       </select>
     </div>
-    <canvas id="main-canvas" :width="canvasWidth" :height="canvasHeight"></canvas>
+    <div id="main-canvas-container">
+      <canvas id="main-canvas" :width="canvasWidth" :height="canvasHeight"></canvas>
+    </div>
     <div id="main-control-panel">
       <div>
         <button id="btn-prev" @click="prev"><i class="material-icons">keyboard_arrow_left</i></button>
@@ -152,7 +154,7 @@ export default {
     saveAllFrames () {
       const totalFrame = this.totalFrame
       var record = null
-      var c = document.getElementById('main-canvas')
+      var c = document.querySelector('#main-canvas-container > canvas')
       record = () => {
         this.update()
         this.$store.commit('NEXT_KEY')

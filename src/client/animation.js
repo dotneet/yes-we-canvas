@@ -1,4 +1,6 @@
 import clone from './clone.js'
+import * as THREE from 'three'
+import * as threeUtil from './three_util'
 
 const defaultInitFunction = () => { console.log('%cinit() is undefined', 'color: red') }
 const defaultUpdateFunction = () => { console.log('%cinit() is undefined', 'color: red') }
@@ -11,6 +13,8 @@ class AnimationContext {
     this.audio2 = context.audio2
     this.audio3 = context.audio3
     this.audio4 = context.audio4
+    this.fabricUtil = this.getFabricUtil()
+    this.threeUtil = threeUtil
   }
 
   add (canvasElement) {
@@ -21,16 +25,45 @@ class AnimationContext {
     this.canvas.setBackgroundImage(img)
   }
 
-  loadImage (url, options = null) {
-    return new Promise(function (resolve, reject) {
-      window.fabric.Image.fromURL(url, function (img) {
-        resolve(img)
-      }, options)
-    })
+  initThree () {
+    let scene = new THREE.Scene()
+
+    let camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 500)
+    camera.position.set(0, 0, 100)
+    camera.lookAt(new THREE.Vector3(0, 0, 0))
+
+    let renderer = new THREE.WebGLRenderer()
+    renderer.domElement.id = 'main-canvas'
+    renderer.setSize(640, 480)
+    let render = () => {
+      renderer.render(scene, camera)
+    }
+    document.getElementById('main-canvas-container').innerHTML = ''
+    document.getElementById('main-canvas-container').appendChild(renderer.domElement)
+
+    render()
+
+    return {
+      scene,
+      camera,
+      render,
+      renderer
+    }
   }
 
-  createText (text, options = null) {
-    return new window.fabric.Text(text, options)
+  getFabricUtil () {
+    return {
+      loadImage: function (url, options = null) {
+        return new Promise(function (resolve, reject) {
+          window.fabric.Image.fromURL(url, function (img) {
+            resolve(img)
+          }, options)
+        })
+      },
+      createText: function (text, options = null) {
+        return new window.fabric.Text(text, options)
+      }
+    }
   }
 }
 
