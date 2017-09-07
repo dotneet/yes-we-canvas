@@ -11,11 +11,13 @@ export default class Context {
     this.audio3 = null
     this.audio4 = null
     this.audioCommands = []
+    this.initialized = false
   }
 
   init () {
     this.initFabric()
     this.initWebSocket()
+    this.initialized = true
   }
 
   initFabric () {

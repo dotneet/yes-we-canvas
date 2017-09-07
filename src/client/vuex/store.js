@@ -23,8 +23,12 @@ const state = {
 }
 
 const actions = {
-  next_key: 'NEXT_KEY',
-  prev_key: 'PREV_KEY'
+  next_key (context) {
+    context.commit('NEXT_KEY')
+  },
+  prev_key (context) {
+    context.commit('PREV_KEY')
+  }
 }
 
 export default new Vuex.Store({

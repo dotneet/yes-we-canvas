@@ -114,7 +114,7 @@
       },
       changeScript () {
         console.log(this.selectedScript)
-        if (this.selectedScript != null) {
+        if (this.context.initialized && this.selectedScript !== null) {
           this.loadScript(() => {
             this.context.clear()
           })
