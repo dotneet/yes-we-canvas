@@ -88,7 +88,7 @@
           complete: (response) => {
             console.log(response)
             this.scripts = response.responseJSON.files
-            var batchParams = this.$store.state.batchParams
+            let batchParams = this.$store.state.batchParams
             if (batchParams !== null && batchParams.script !== null) {
               this.selectedScript = batchParams.script
             } else {
@@ -102,7 +102,7 @@
                 this.context.audio2 = new AudioProxy(this, 'audio2')
                 this.context.audio3 = new AudioProxy(this, 'audio3')
                 this.context.audio4 = new AudioProxy(this, 'audio4')
-                var me = this
+                let me = this
                 this.context.clear().then(function () {
                   console.log('application initialized after Promise')
                   me.$bus.$emit('application_initialized')
@@ -121,11 +121,11 @@
         }
       },
       loadScript (callback) {
-        var script = document.createElement('script')
+        let script = document.createElement('script')
         script.src = 'animation/' + this.selectedScript + '?' + Math.floor(Math.random() * 1000000)
         script.onload = () => {
           this.$bus.$emit('script_onload')
-          var batchParams = this.$store.state.batchParams
+          let batchParams = this.$store.state.batchParams
           if (batchParams !== null && batchParams.params !== null) {
             window.animation.params = _.merge(window.animation.params, this.$store.state.batchParams.params)
           }
@@ -154,8 +154,8 @@
       },
       saveAllFrames () {
         const totalFrame = this.totalFrame
-        var record = null
-        var c = document.querySelector('#main-canvas-container > canvas')
+        let record = null
+        let c = document.querySelector('#main-canvas-container > canvas')
         record = () => {
           this.update()
           this.$store.commit('NEXT_KEY')

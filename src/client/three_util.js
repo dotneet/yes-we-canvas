@@ -5,6 +5,34 @@ class ThreeUtil {
   init () {
     let scene = new THREE.Scene()
 
+    const width = 640
+    const height = 480
+    let camera = new THREE.OrthographicCamera(-width / 2, width / 2, -height / 2, width / 2, 0.001, 5000)
+    camera.position.set(0, 0, -100)
+    camera.lookAt(new THREE.Vector3(0, 0, 0))
+
+    let renderer = new THREE.WebGLRenderer()
+    renderer.domElement.id = 'main-canvas'
+    renderer.setSize(width, height)
+    let render = () => {
+      renderer.render(scene, camera)
+    }
+    document.getElementById('main-canvas-container').innerHTML = ''
+    document.getElementById('main-canvas-container').appendChild(renderer.domElement)
+
+    render()
+
+    return {
+      scene,
+      camera,
+      render,
+      renderer
+    }
+  }
+
+  init3D () {
+    let scene = new THREE.Scene()
+
     let camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 500)
     camera.position.set(0, 0, 100)
     camera.lookAt(new THREE.Vector3(0, 0, 0))
@@ -28,10 +56,22 @@ class ThreeUtil {
     }
   }
 
+  createLine (mat, vectors) {
+    let material = new THREE.LineBasicMaterial(mat)
+
+    let geometry = new THREE.Geometry()
+    vectors.forEach(v => {
+      geometry.vertices.push(new THREE.Vector3(v[0], v[1], v[2]))
+    })
+
+    return new THREE.Line(geometry, material)
+  }
+
   loadImage (image) {
     return new Promise((resolve, reject) => {
       new THREE.TextureLoader().load(image, (texture) => {
         texture.minFilter = THREE.LinearFilter
+        texture.flipY = false
         resolve(texture)
       }, null, (e) => {
         reject(e)

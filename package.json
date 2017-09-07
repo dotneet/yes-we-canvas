@@ -2,7 +2,7 @@
   "name": "yes-we-canvas",
   "version": "2.0.0",
   "description": "animation creating environment.",
-  "main": "src/server.js",
+  "main": "src/server/index.js",
   "scripts": {
     "dev": "node-dev src/server/index.js",
     "build": "webpack --progress --hide-modules --config build/webpack.dev.conf.js",
