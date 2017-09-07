@@ -18,7 +18,11 @@ if (args.length > 2) {
   additionalParams = JSON.parse(json)
 }
 
-const chromy = new Chromy()
+const chromyOpts = {visible: true}
+if (process.env.CHROME_PATH) {
+  chromyOpts['chromePath'] = process.env.CHROME_PATH
+}
+const chromy = new Chromy(chromyOpts)
 
 async function onReceive (params) {
   console.log('receive:', params)
