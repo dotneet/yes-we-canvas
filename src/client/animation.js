@@ -77,14 +77,21 @@ export default class Animation {
     this.context = null
   }
 
-  doInit (context, config) {
+  async doInit (context, config) {
     this.context = new AnimationContext(context)
     this.context.params = clone(this.params)
-    return this.init.apply(this.context, [config])
+    let result = await this.init.apply(this.context, [config])
+    if (this.context.render) {
+      this.context.render()
+    }
+    return result
   }
 
   doUpdate (key) {
     this.update.apply(this.context, [key])
+    if (this.context.render) {
+      this.context.render()
+    }
   }
 
   doStop () {

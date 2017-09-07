@@ -1,29 +1,25 @@
 /**
- * this.threeUtil: utility
- * this.audio: Audio
+ * this.three: three utility
+ * this.audio: audio utility
  */
+
+// this parameter can be accessed by `this.params`
+// when generate a video file with this script by record.js,
+// this parameter can be override by parameter file supplied to record.js
 animation.params = {
-  width: 100,
-  height: 100
+  image: 'img/hoge.jpg'
 }
 
+// init() is called once before starting animation
 animation.init = async function (config) {
-  config.width = 640
-  config.height = 480
-  console.log(this)
-  const three = this.three.init()
-  let scene = three.scene
+  // movieLength express the length of movie in seconds.
+  config.movieLength = 10
+  // frameRate express the frame-count by second.
+  config.frameRate = 30
 
-  /*
-  let material = new THREE.LineBasicMaterial({color: 0x0000ff})
+  const context = this.three.init()
+  let scene = context.scene
 
-  let geometry = new THREE.Geometry()
-  geometry.vertices.push(new THREE.Vector3(0, 0, -1))
-  geometry.vertices.push(new THREE.Vector3(-100, -100, -1))
-  geometry.vertices.push(new THREE.Vector3(0, -100, -1))
-
-  let line = new THREE.Line(geometry, material)
-  */
   let line = this.three.createLine({color: 0x0000ff}, [
     [-50, -50, 1],
     [-50, 50, 1],
@@ -35,24 +31,23 @@ animation.init = async function (config) {
   line.position.set(0, 0, -20)
   scene.add(line)
 
-  let sprite = await this.three.createSpriteFromImage('img/hoge.jpg')
+  let sprite = await this.three.createSpriteFromImage(this.params.image)
   sprite.position.set(0, 0, 0)
   sprite.scale.set(640, 480, 1)
   scene.add(sprite)
 
   this.line = line
   this.sprite = sprite
-  this.render = three.render
-  this.render()
+
+  // if this.render is defined, it is called every time after update()
+  this.render = context.render
 }
 
+// update() is called every keyframe
 animation.update = function (key) {
   if (key === 1) {
     this.audio.play('bgm01.mp3')
   }
-  console.log('RENDER')
   this.line.rotation.z += 0.1
   this.sprite.position.x += 0.1
-  this.render()
 }
-

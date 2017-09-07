@@ -2,13 +2,13 @@ import * as THREE from 'three'
 
 class ThreeUtil {
 
-  init () {
+  // 2D 描画用のシーンを作成する
+  // 平行投影カメラを使うのでZ座標の変化による表示サイズのスケールは行われない
+  init (width = 640, height = 480) {
     let scene = new THREE.Scene()
 
-    const width = 640
-    const height = 480
     let camera = new THREE.OrthographicCamera(-width / 2, width / 2, -height / 2, width / 2, 0.001, 5000)
-    camera.position.set(0, 0, -100)
+    camera.position.set(0, 0, -1000)
     camera.lookAt(new THREE.Vector3(0, 0, 0))
 
     let renderer = new THREE.WebGLRenderer()
