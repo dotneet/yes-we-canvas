@@ -5,13 +5,16 @@ export default class AudioProxy {
     this.element = window.$('#' + elmId)[0]
     this.source = null
   }
+
   setSource (source) {
     this.source = source
     window.$('#' + this.elmId).attr('src', source + '?' + Math.floor(Math.random() * 1000000))
     // this.app.context.audioCommands.push({name:'source', src: source, key: this.app.currentKey})
   }
+
   init () {
   }
+
   play (source) {
     if (this.source !== source || this.element.paused) {
       this.setSource(source)
@@ -21,12 +24,14 @@ export default class AudioProxy {
       this.app.context.audioCommands.push({name: 'play', src: this.source, key: this.app.currentKey})
     }
   }
+
   pause () {
     if (!this.app.isBatch) {
       this.element.pause()
     }
     this.app.context.audioCommands.push({name: 'pause', src: this.source, key: this.app.currentKey})
   }
+
   reset () {
     console.log('reset:' + this.elmId)
     if (!this.app.isBatch) {

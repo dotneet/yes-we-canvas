@@ -21,7 +21,7 @@ const vue = new Vue({
   render: function (h) {
     return h('App')
   },
-  components: { App },
+  components: {App},
   store
 })
 
