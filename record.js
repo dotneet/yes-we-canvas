@@ -1,5 +1,5 @@
 /**
- * This script generates a movie file from parameter file by accessing server.
+ * This script generates a movie file from parameter file.
  *
  * Command Example:
  * node examples/param_example1.json
@@ -7,6 +7,7 @@
 
 const Chromy = require('chromy')
 const fs = require('fs')
+const startServer = require('./src/server/server')
 
 const args = process.argv
 
@@ -64,8 +65,13 @@ async function recording () {
     .then(_ => chromy.close())
 }
 
-function main () {
-  recording()
+async function main () {
+  const server = startServer()
+  try {
+    await recording()
+  } finally {
+    server.close()
+  }
 }
 
 main()
