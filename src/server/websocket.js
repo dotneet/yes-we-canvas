@@ -29,7 +29,7 @@ function mimeTypeToExtension (mimeType) {
 
 function download (url, path, callback) {
   let file = fs.createWriteStream(path)
-  let request = http.get(url, function (response) {
+  http.get(url, function (response) {
     response.pipe(file)
     response.on('end', function () {
       callback(file)
@@ -82,17 +82,21 @@ module.exports = function (io, serverConfig) {
         }
       }
 
-      fs.exists(outputDir, (exists) => {
-        if (exists) {
+      fs.access(outputDir, (err) => {
+        if (!err) {
           let ext = mimeTypeToExtension(context.options.imageFormat)
           glob(outputDir + '/*.' + ext, null, (er, files) => {
             files.forEach((f) => {
-              fs.unlink(f)
+              fs.unlink(f, (err) => {
+                if (err) {
+                  console.error(err)
+                }
+              })
             })
             cb()
           })
         } else {
-          fs.mkdir(outputDir, (err) => {
+          fs.mkdir(outputDir, (_) => {
             cb()
           })
         }
@@ -112,7 +116,7 @@ module.exports = function (io, serverConfig) {
           }
         })
       } else {
-        console.log('found a incorrect data type: ' + typeof(data))
+        console.log('found a incorrect data type: ' + (typeof data))
       }
     })
 
@@ -151,7 +155,7 @@ module.exports = function (io, serverConfig) {
               let s = clone(sound)
               s.src = soundOutputPath
               soundInputs.push(s)
-              if (soundInputs.length == len) {
+              if (soundInputs.length === len) {
                 createMovie(cb, soundInputs)
               }
             })
@@ -159,7 +163,7 @@ module.exports = function (io, serverConfig) {
             let s = clone(sound)
             s.src = wwwDir + '/' + url
             soundInputs.push(s)
-            if (soundInputs.length == len) {
+            if (soundInputs.length === len) {
               createMovie(cb, soundInputs)
             }
           }
@@ -209,14 +213,13 @@ module.exports = function (io, serverConfig) {
     console.log('')
     console.log(cmd)
     childProcess.exec(cmd, {}, (err, stdout, stderr) => {
-      if (stdout != null) {
+      if (stdout !== null) {
         console.log(stdout)
       }
-      if (stderr != null) {
+      if (stderr !== null) {
         console.log(stderr)
       }
       cb(err, stdout, stderr)
     })
   }
 }
-

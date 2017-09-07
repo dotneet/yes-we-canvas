@@ -34,7 +34,6 @@
 </template>
 
 <script>
-
   import Context from './context.js'
   import AudioProxy from './audio_proxy.js'
   import _ from 'lodash'
@@ -57,7 +56,7 @@
   export default {
     name: 'App',
     data () {
-      var data = {
+      let data = {
         videoSource: 'output.mp4',
         context: new Context(this, window.io(), window.animation),
         animation: window.animation,
@@ -235,7 +234,6 @@
       }
     }
   }
-
 </script>
 
 <style scoped>

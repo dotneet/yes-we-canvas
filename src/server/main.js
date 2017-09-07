@@ -30,9 +30,9 @@ app.get('/animation/:name', function (req, res) {
 })
 
 app.get('/animation/', function (req, res) {
-  glob(serverConfig.appRootDir + '/animation/*.js', null, function (err, files) {
+  glob(serverConfig.appRootDir + '/animation/*.js', null, function (_, files) {
     console.log(files)
-    files = files.map((f) => { return path.basename(f)})
+    files = files.map((f) => { return path.basename(f) })
     res.json({files: files})
   })
 })

@@ -50,4 +50,3 @@ window.onBatch = async () => {
 window.jQuery(function ($) {
   $('.fancybox').fancybox()
 })
-

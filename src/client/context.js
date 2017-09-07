@@ -41,10 +41,10 @@ export default class Context {
     this.canvas.setBackgroundColor('#ffffff')
     this.canvas.setBackgroundImage(null)
     this.audioCommands = []
-    var store = this.app.$store
-    var obj = this.animation.doInit(this, store.state.config)
-    var me = this
-    if (obj != null && (typeof obj) === 'object' && 'then' in obj) {
+    let store = this.app.$store
+    let obj = this.animation.doInit(this, store.state.config)
+    let me = this
+    if (obj !== null && (typeof obj) === 'object' && 'then' in obj) {
       return obj.then(function () {
         me.canvas.setWidth(store.state.config.width)
         me.canvas.setHeight(store.state.config.height)

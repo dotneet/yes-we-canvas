@@ -96,9 +96,6 @@ export default class Animation {
   }
 
   loaded () {
-    if (this.init !== defaultInitFunction) {
-      return true
-    }
-    return false
+    return this.init !== defaultInitFunction
   }
 }

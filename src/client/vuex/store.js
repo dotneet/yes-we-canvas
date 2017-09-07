@@ -38,4 +38,3 @@ export default new Vuex.Store({
     canvasHeight: state => { return state.config.height }
   }
 })
-
