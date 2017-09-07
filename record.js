@@ -24,6 +24,7 @@ if (process.env.CHROME_PATH) {
 }
 const chromy = new Chromy(chromyOpts)
 
+let exited = false
 async function onReceive (params) {
   console.log('receive:', params)
   let data = params[0]
@@ -42,6 +43,7 @@ async function onReceive (params) {
     // do nothing.
   } else if (data.cmd === 'exit') {
     console.log('exit')
+    exited = true
     await chromy.close()
   } else {
     console.log('unknown command')
@@ -49,8 +51,19 @@ async function onReceive (params) {
   }
 }
 
+function waitForFinishRecoding () {
+  return new Promise((resolve, reject) => {
+    let t = setInterval(() => {
+      if (exited) {
+        clearInterval(t)
+        resolve()
+      }
+    }, 200)
+  })
+}
+
 async function recording () {
-  return chromy.chain()
+  await chromy.chain()
     .console(msg => {
       console.log(msg)
     })
@@ -61,12 +74,13 @@ async function recording () {
     .evaluate(async _ => {
       await window.onBatch()
     })
-    .sleep(4000)
+    .sleep(3000)
     .end()
     .catch(e => {
       console.log(e)
     })
-    .then(_ => chromy.close())
+  await waitForFinishRecoding()
+  await chromy.close()
 }
 
 async function main () {
@@ -75,6 +89,7 @@ async function main () {
     await recording()
   } finally {
     server.close()
+    console.log('SERVER WAS CLOSED.')
   }
 }
 
