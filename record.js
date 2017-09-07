@@ -44,21 +44,28 @@ async function onReceive (params) {
   }
 }
 
-chromy.chain()
-  .console(msg => {
-    console.log(msg)
-  })
-  .goto('http://localhost:8000/index.html')
-  .sleep(100)
-  .receiveMessage(onReceive)
-  .sleep(100)
-  .evaluate(async _ => {
-    await window.onBatch()
-  })
-  .sleep(4000)
-  .end()
-  .then(_ => chromy.close())
-  .catch(e => {
-    console.log(e)
-    chromy.close()
-  })
+async function recording () {
+  return chromy.chain()
+    .console(msg => {
+      console.log(msg)
+    })
+    .goto('http://localhost:8000/index.html')
+    .sleep(100)
+    .receiveMessage(onReceive)
+    .sleep(100)
+    .evaluate(async _ => {
+      await window.onBatch()
+    })
+    .sleep(4000)
+    .end()
+    .catch(e => {
+      console.log(e)
+    })
+    .then(_ => chromy.close())
+}
+
+function main () {
+  recording()
+}
+
+main()
