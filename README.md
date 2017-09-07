@@ -26,15 +26,15 @@ npm run server
 
 ## Write an animation
 
-you can write an animation code at "animation/*.js".
+you can write an animation script at "animation/*.js".
 
 ## Show animation and export as video file
 
-Open url 'http://localhost:8000' in chrome browser.
+Open the url 'http://localhost:8000' in chrome browser.
 
 ### animation.init(config)
 
-animation.init() is called at once on beginnig of animation.
+animation.init() is called once when starting animation.
 
 this.canvas: fabric.StaticCanvas  
 this.audio: for controling audio playing.
@@ -57,24 +57,18 @@ key: current frame number
 ## writing a video file by command line.
 
 ```bash
-node record.js
-```
-
-with parameter file.
-
-```bash
 node record.js test.json
 ```
 
 ### exmaple of parameter file 
-```json:test.json
+
+```json
 {
   "script": "sample.js",
   "params": {
     "img1": "http://example.com/image/abc.png"
   }
 }
-
 ```
 
 # License
