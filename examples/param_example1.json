@@ -1,0 +1,10 @@
+{
+  "description": "This is a example parameter file that is supplied to record.js",
+  "script": "sample.js",
+  "output": "www/output.mp4",
+  "params": {
+    "width": 200,
+    "height": 200 
+  }
+}
+

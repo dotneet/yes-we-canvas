@@ -1,5 +1,8 @@
 /**
- * This script make a movie file.
+ * This script generates a movie file from parameter file by accessing server.
+ *
+ * Command Example:
+ * node examples/param_example1.json
  */
 
 const Chromy = require('chromy')
