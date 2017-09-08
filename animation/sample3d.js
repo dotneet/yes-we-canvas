@@ -8,12 +8,12 @@
 // this parameter can be override by parameter file supplied to record.js
 animation.params = {
   images: [
-    'https://i.imgur.com/3wDfRja.jpg',
-    'https://i.imgur.com/3wDfRja.jpg',
-    'https://i.imgur.com/3wDfRja.jpg',
-    'https://i.imgur.com/3wDfRja.jpg',
-    'https://i.imgur.com/3wDfRja.jpg',
-    'https://i.imgur.com/3wDfRja.jpg'
+    'img/hoge.jpg',
+    'img/hoge.jpg',
+    'img/hoge.jpg',
+    'img/hoge.jpg',
+    'img/hoge.jpg',
+    'img/hoge.jpg'
   ]
 }
 
@@ -24,7 +24,7 @@ animation.init = async function (config) {
   // frameRate express the frame-count by second.
   config.frameRate = 30
 
-  const context = this.three.init()
+  const context = this.three.init3D()
   let scene = context.scene
 
   let line = this.three.createLine({color: 0x0000ff}, [
@@ -38,16 +38,19 @@ animation.init = async function (config) {
   line.position.set(0, 0, -20)
   scene.add(line)
 
+  this.images = []
   for (let i in this.params.images) {
     let img = this.params.images[i]
-    let sprite = await this.three.createSpriteFromImage(img)
-    sprite.position.set(-300 + (i*80), -100 + i*40, i*40)
+    // let sprite = await this.three.createSpriteFromImage(img)
+    let sprite = await this.three.createMeshFromImage(img)
+    console.log(sprite)
+    sprite.position.set(-300 + (i*80), -100 + i*40, 0)
     sprite.scale.set(80, 80, 1)
     scene.add(sprite)
+    this.images.push(sprite)
   }
 
   this.line = line
-  this.sprite = sprite
 
   // if this.render is defined, it is called every time after update()
   this.render = context.render
@@ -58,5 +61,11 @@ animation.update = function (key) {
   if (key === 1) {
     this.audio.play('bgm01.mp3')
   }
-  this.line.rotation.z += 0.1
+  /*
+  this.images.forEach(img => {
+    img.position.z += 10
+    img.rotation.z += 0.1
+  })
+  */
+  // this.line.rotation.z += 0.1
 }

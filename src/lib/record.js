@@ -1,0 +1,87 @@
+/**
+ * This script generates a movie file from parameter file.
+ *
+ * Command Example:
+ * node examples/param_example1.json
+ */
+
+const Chromy = require('chromy')
+const fs = require('fs')
+const startServer = require('../server/server')
+
+const chromyOpts = {visible: true}
+if (process.env.CHROME_PATH) {
+  chromyOpts['chromePath'] = process.env.CHROME_PATH
+}
+const chromy = new Chromy(chromyOpts)
+
+async function onReceive (onExited, additionalParams, params) {
+  console.log('receive:', params)
+  let data = params[0]
+
+  if (data.cmd === 'prepare') {
+    if (additionalParams !== null) {
+      let s = 'window.store.state.batchParams = JSON.parse(\'' + JSON.stringify(additionalParams) + '\')'
+      await chromy.evaluate(s)
+    }
+    return additionalParams
+  } else if (data.cmd === 'initialized') {
+    await chromy.evaluate(function () {
+      document.getElementById('btn-record').click()
+    })
+  } else if (data.cmd === 'script_onload') {
+    // do nothing.
+  } else if (data.cmd === 'exit') {
+    console.log('exit')
+    onExited.apply(null)
+    await chromy.close()
+  } else {
+    console.log('unknown command')
+    console.log(data)
+  }
+}
+
+async function recording (params) {
+  let exited = false
+  let onExited = () => {
+    exited =true
+  }
+  await chromy.chain()
+    .console(msg => {
+      console.log(msg)
+    })
+    .goto('http://localhost:8000/index.html')
+    .sleep(100)
+    .receiveMessage(onReceive.bind(this, onExited, params))
+    .sleep(100)
+    .evaluate(async _ => {
+      await window.onBatch()
+    })
+    .sleep(3000)
+    .end()
+    .catch(e => {
+      console.log(e)
+    })
+  await new Promise((resolve, reject) => {
+    let t = setInterval(() => {
+      if (exited) {
+        clearInterval(t)
+        resolve()
+      }
+    }, 200)
+  })
+  await chromy.close()
+}
+
+async function main (params) {
+  const server = startServer()
+  try {
+    await recording(params)
+  } finally {
+    server.close()
+    console.log('SERVER WAS CLOSED.')
+  }
+}
+
+module.exports = main
+

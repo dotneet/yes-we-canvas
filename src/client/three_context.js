@@ -76,10 +76,12 @@ export default class ThreeContext {
   loadImage (image) {
     return new Promise((resolve, reject) => {
       new THREE.TextureLoader().load(image, (texture) => {
+        /*
         texture.minFilter = THREE.LinearFilter
         if (!this.is3D) {
           texture.flipY = false
         }
+        */
         resolve(texture)
       }, null, (e) => {
         reject(e)
@@ -91,5 +93,28 @@ export default class ThreeContext {
     const map = await this.loadImage(imageUrl)
     const material = new THREE.SpriteMaterial({map: map, color: 0xffffff, fog: true})
     return new THREE.Sprite(material)
+  }
+
+  async createMeshFromImage (imageUrl) {
+    const map = await this.loadImage(imageUrl)
+    // const map = THREE.ImageUtils.loadTexture(imageUrl)
+    let material = new THREE.MeshPhongMaterial({
+      color: '#FFFFFFFF',
+      map: map
+    })
+    // let geo = this.createSquareGeometory()
+    let geo = new THREE.BoxGeometry(1, 1, 1)
+    return new THREE.Mesh(geo, material)
+  }
+
+  createSquareGeometory () {
+    let squareGeometry = new THREE.Geometry()
+    squareGeometry.vertices.push(new THREE.Vector3(-1.0, 1.0, 0.0))
+    squareGeometry.vertices.push(new THREE.Vector3(1.0, 1.0, 0.0))
+    squareGeometry.vertices.push(new THREE.Vector3(1.0, -1.0, 0.0))
+    squareGeometry.vertices.push(new THREE.Vector3(-1.0, -1.0, 0.0))
+    squareGeometry.faces.push(new THREE.Face3(0, 1, 2))
+    squareGeometry.faces.push(new THREE.Face3(0, 2, 3))
+    return squareGeometry
   }
 }
