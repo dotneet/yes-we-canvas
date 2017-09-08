@@ -1,6 +1,6 @@
 import * as THREE from 'three'
 
-class ThreeUtil {
+class ThreeContext {
 
   // 2D 描画用のシーンを作成する
   // 平行投影カメラを使うのでZ座標の変化による表示サイズのスケールは行われない
@@ -30,16 +30,16 @@ class ThreeUtil {
     }
   }
 
-  init3D () {
+  init3D (width = 640, height = 480) {
     let scene = new THREE.Scene()
 
-    let camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 500)
-    camera.position.set(0, 0, 100)
+    let camera = new THREE.PerspectiveCamera(45, width / height, 0.001, 5000)
+    camera.position.set(0, 0, -600)
     camera.lookAt(new THREE.Vector3(0, 0, 0))
 
     let renderer = new THREE.WebGLRenderer()
     renderer.domElement.id = 'main-canvas'
-    renderer.setSize(640, 480)
+    renderer.setSize(width, height)
     let render = () => {
       renderer.render(scene, camera)
     }
@@ -86,4 +86,4 @@ class ThreeUtil {
   }
 }
 
-export default new ThreeUtil()
+export default new ThreeContext()
