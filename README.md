@@ -57,7 +57,7 @@ key: current frame number
 ## writing a video file by command line.
 
 ```bash
-node record.js test.json
+node src/command/record.js exmaples/param_example1.json
 ```
 
 ### exmaple of parameter file 
