@@ -1,6 +1,6 @@
 import clone from './clone.js'
 import * as THREE from 'three'
-import threeUtil from './three_util'
+import ThreeContext from './three_context'
 
 const defaultInitFunction = () => { console.log('%cinit() is undefined', 'color: red') }
 const defaultUpdateFunction = () => { console.log('%cinit() is undefined', 'color: red') }
@@ -14,7 +14,7 @@ class AnimationContext {
     this.audio3 = context.audio3
     this.audio4 = context.audio4
     this.fabricUtil = this.getFabricUtil()
-    this.three = threeUtil
+    this.three = new ThreeContext()
   }
 
   add (canvasElement) {

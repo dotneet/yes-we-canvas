@@ -1,6 +1,10 @@
 import * as THREE from 'three'
 
-class ThreeContext {
+export default class ThreeContext {
+
+  constructor () {
+    this.is3D = false
+  }
 
   // 2D 描画用のシーンを作成する
   // 平行投影カメラを使うのでZ座標の変化による表示サイズのスケールは行われない
@@ -30,11 +34,13 @@ class ThreeContext {
     }
   }
 
+  // 3D 描画用のシーンを作成する
   init3D (width = 640, height = 480) {
+    this.is3D = true
     let scene = new THREE.Scene()
 
     let camera = new THREE.PerspectiveCamera(45, width / height, 0.001, 5000)
-    camera.position.set(0, 0, -600)
+    camera.position.set(0, 0, -580)
     camera.lookAt(new THREE.Vector3(0, 0, 0))
 
     let renderer = new THREE.WebGLRenderer()
@@ -71,7 +77,9 @@ class ThreeContext {
     return new Promise((resolve, reject) => {
       new THREE.TextureLoader().load(image, (texture) => {
         texture.minFilter = THREE.LinearFilter
-        texture.flipY = false
+        if (!this.is3D) {
+          texture.flipY = false
+        }
         resolve(texture)
       }, null, (e) => {
         reject(e)
@@ -85,5 +93,3 @@ class ThreeContext {
     return new THREE.Sprite(material)
   }
 }
-
-export default new ThreeContext()

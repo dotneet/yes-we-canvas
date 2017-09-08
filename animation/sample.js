@@ -49,5 +49,4 @@ animation.update = function (key) {
     this.audio.play('bgm01.mp3')
   }
   this.line.rotation.z += 0.1
-  this.sprite.position.x += 0.1
 }
