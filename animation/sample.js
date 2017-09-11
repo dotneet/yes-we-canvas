@@ -46,7 +46,7 @@ animation.init = async function (config) {
 // update() is called every keyframe
 animation.update = function (key) {
   if (key === 1) {
-    this.audio.play('bgm01.mp3')
+    this.audio.play('sound/bgm01.mp3')
   }
   this.line.rotation.z += 0.1
 }

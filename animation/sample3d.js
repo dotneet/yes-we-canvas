@@ -54,10 +54,6 @@ animation.init = async function (config) {
 
 // update() is called every keyframe
 animation.update = function (key) {
-  if (key === 1) {
-    this.audio.play('bgm01.mp3')
-  }
-
   const u = (Math.PI / 180.0)
   for (let i in this.images) {
     let img = this.images[i]
