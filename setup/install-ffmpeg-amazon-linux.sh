@@ -117,4 +117,4 @@ cp $HOME/bin/yasm /usr/bin/
 cp $HOME/bin/ytasm /usr/bin/
 
 
-ffmpeg -v
+ffmpeg -version
