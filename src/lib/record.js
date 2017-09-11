@@ -9,7 +9,7 @@ const Chromy = require('chromy')
 const config = require('../../app-config')
 const fs = require('fs')
 
-const chromyOpts = {}
+const chromyOpts = config.chromy ? Object.assign({}, config.chromy) : {}
 if (process.env.CHROME_PATH) {
   chromyOpts['chromePath'] = process.env.CHROME_PATH
 }
