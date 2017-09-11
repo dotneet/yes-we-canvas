@@ -136,7 +136,7 @@
       },
       update () {
         this.animation.doUpdate(this.currentKey)
-        this.context.canvas.renderAll()
+        // this.context.canvas.renderAll()
       },
       record () {
         if (this.isBatch || confirm('Do you want to export as video?')) {

@@ -22,7 +22,7 @@ animation.init = async function (config) {
   // movieLength express the length of movie in seconds.
   config.movieLength = 13
   // frameRate express the frame-count by second.
-  config.frameRate = 30
+  config.frameRate = 60
 
   const context = this.three.init3D()
   let scene = context.scene
@@ -64,9 +64,9 @@ animation.update = function (key) {
     const ox = i * 60
     const oy = i * 60 - 90
     const oz = i * 60
-    let x = Math.sin(u * (ox + key)) * 200.0
-    let y = Math.cos(u * (oy + key)) * 50.0
-    let z = Math.cos(u * (oz + key)) * 480.0
+    let x = Math.sin(u * (ox + key * 0.5)) * 200.0
+    let y = Math.cos(u * (oy + key * 0.5)) * 50.0
+    let z = Math.cos(u * (oz + key * 0.5)) * 480.0
     img.position.set(x, y, z)
   }
 }

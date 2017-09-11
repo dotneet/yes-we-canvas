@@ -76,8 +76,13 @@ export default class ThreeContext {
   }
 
   loadImage (image) {
+    if (image.indexOf('http:') >= 0 || image.indexOf('https:') >= 0) {
+      image = '/proxy?url=' + image
+    }
     return new Promise((resolve, reject) => {
-      new THREE.TextureLoader().load(image, (texture) => {
+      let textureLoader = new THREE.TextureLoader()
+      textureLoader.crossOrigin = '*'
+      textureLoader.load(image, (texture) => {
         texture.minFilter = THREE.LinearFilter
         texture.magFilter = THREE.LinearMipmapLinearFilter
         texture.flipY = false

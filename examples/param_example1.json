@@ -1,6 +1,6 @@
 {
   "description": "This is a example parameter file that is supplied to record.js",
-  "script": "sample.js",
+  "script": "sample3d.js",
   "output": "www/output.mp4",
   "params": {
     "width": 200,

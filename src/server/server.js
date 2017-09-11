@@ -1,16 +1,41 @@
 const serverConfig = require('../../app-config.js')
 const express = require('express')
+const bodyParser = require('body-parser')
 const path = require('path')
-const app = express()
-const http = require('http').Server(app)
-const io = require('socket.io')(http)
 const websocket = require('./websocket.js')
 const glob = require('glob')
+const record = require('../lib/record')
+const request = require('request')
 
-function startServer () {
+async function startServer (port = 8000) {
+
+  const app = express()
+  const http = require('http').Server(app)
+  const io = require('socket.io')(http)
+
   websocket(io, serverConfig)
 
   app.use(express.static(serverConfig.wwwDir))
+  app.use(bodyParser.json())
+  app.use(bodyParser.urlencoded({extended: true}))
+
+  app.post('/animation/:name/record', async function (req, res) {
+    await record(req.body, startServer)
+    res.json({message: 'OK'})
+  })
+
+  // 画像読み込み時のCORSエラーを回避する
+  app.get('/proxy', async function (req, res) {
+    console.log(req.query.url)
+    request({url: req.query.url, method: 'GET', encoding: null}, (err, response, body) => {
+      if (err) {
+        res.sendStatus(400)
+        return res.send({message: 'error'})
+      }
+      res.set('Content-Type', response.headers['content-type'])
+      res.send(body)
+    })
+  })
 
   app.get('/animation/:name', function (req, res) {
     const options = {
@@ -36,11 +61,12 @@ function startServer () {
     })
   })
 
-  http.listen(8000, function () {
-    console.log('listen')
+  return new Promise((resolve, reject) => {
+    http.listen(port, function () {
+      console.log(`listen: ${port}`)
+      resolve(http)
+    })
   })
-
-  return http
 }
 
 module.exports = startServer

@@ -8,6 +8,7 @@
 const record = require('../lib/record.js')
 const Chromy = require('chromy')
 const fs = require('fs')
+const startServer = require('../server/server')
 
 const args = process.argv
 
@@ -18,5 +19,5 @@ if (args.length > 2) {
   params = JSON.parse(json)
 }
 
-record(params)
+record(params, startServer)
 

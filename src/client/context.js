@@ -21,7 +21,7 @@ export default class Context {
   }
 
   initFabric () {
-    this.canvas = new window.fabric.StaticCanvas('main-canvas')
+    // this.canvas = new window.fabric.StaticCanvas('main-canvas')
   }
 
   initWebSocket () {
@@ -39,23 +39,23 @@ export default class Context {
   }
 
   clear () {
-    this.canvas.clear()
-    this.canvas.setBackgroundColor('#ffffff')
-    this.canvas.setBackgroundImage(null)
+    // this.canvas.clear()
+    // this.canvas.setBackgroundColor('#ffffff')
+    // this.canvas.setBackgroundImage(null)
     this.audioCommands = []
     let store = this.app.$store
     let obj = this.animation.doInit(this, store.state.config)
     let me = this
     if (obj !== null && (typeof obj) === 'object' && 'then' in obj) {
       return obj.then(function () {
-        me.canvas.setWidth(store.state.config.width)
-        me.canvas.setHeight(store.state.config.height)
+        // me.canvas.setWidth(store.state.config.width)
+        // me.canvas.setHeight(store.state.config.height)
         me.app.$store.commit('SET_CURRENT_KEY', 0)
       })
     } else {
       return new Promise(function (resolve, reject) {
-        me.canvas.setWidth(store.state.config.width)
-        me.canvas.setHeight(store.state.config.height)
+        // me.canvas.setWidth(store.state.config.width)
+        // me.canvas.setHeight(store.state.config.height)
         me.app.$store.commit('SET_CURRENT_KEY', 0)
         resolve()
       })

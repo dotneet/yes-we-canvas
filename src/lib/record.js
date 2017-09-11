@@ -7,7 +7,6 @@
 
 const Chromy = require('chromy')
 const fs = require('fs')
-const startServer = require('../server/server')
 
 const chromyOpts = {visible: true}
 if (process.env.CHROME_PATH) {
@@ -41,7 +40,7 @@ async function onReceive (onExited, additionalParams, params) {
   }
 }
 
-async function recording (params) {
+async function startRecording (params) {
   let exited = false
   let onExited = () => {
     exited =true
@@ -50,7 +49,7 @@ async function recording (params) {
     .console(msg => {
       console.log(msg)
     })
-    .goto('http://localhost:8000/index.html')
+    .goto('http://localhost:8001/index.html')
     .sleep(100)
     .receiveMessage(onReceive.bind(this, onExited, params))
     .sleep(100)
@@ -73,15 +72,18 @@ async function recording (params) {
   await chromy.close()
 }
 
-async function main (params) {
-  const server = startServer()
+async function recording (params, startServer) {
+  console.log(typeof startServer)
+  const server = await startServer(8001)
   try {
-    await recording(params)
+    await startRecording(params)
+  } catch (e) {
+    console.log(e)
   } finally {
     server.close()
     console.log('SERVER WAS CLOSED.')
   }
 }
 
-module.exports = main
+module.exports = recording
 
