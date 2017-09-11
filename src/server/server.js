@@ -24,10 +24,10 @@ async function startServer (port = 8000) {
     res.json({message: 'OK'})
   })
 
-  // 画像読み込み時のCORSエラーを回避する
+  // this endpoint can be used to get around CORS restrict
   app.get('/proxy', async function (req, res) {
-    console.log(req.query.url)
-    request({url: req.query.url, method: 'GET', encoding: null}, (err, response, body) => {
+    let url = req.query.url
+    request({url: url, method: 'GET', encoding: null}, (err, response, body) => {
       if (err) {
         res.sendStatus(400)
         return res.send({message: 'error'})

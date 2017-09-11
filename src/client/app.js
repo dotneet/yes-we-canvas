@@ -39,9 +39,9 @@ window.onBatch = async () => {
     window.sendToChromy({cmd: 'initialized'})
   })
 
-  vue.$bus.$on('finish_record', () => {
+  vue.$bus.$on('finish_record', (error) => {
     console.log('finish_record')
-    window.sendToChromy({cmd: 'exit'})
+    window.sendToChromy({cmd: 'exit', error})
   })
 
   vue.$bus.$emit('bootstrap')

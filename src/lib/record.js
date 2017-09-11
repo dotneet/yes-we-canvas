@@ -32,7 +32,7 @@ async function onReceive (onExited, additionalParams, params) {
     // do nothing.
   } else if (data.cmd === 'exit') {
     console.log('exit')
-    onExited.apply(null)
+    onExited.apply(null, [data.error])
     await chromy.close()
   } else {
     console.log('unknown command')
@@ -42,8 +42,10 @@ async function onReceive (onExited, additionalParams, params) {
 
 async function startRecording (params) {
   let exited = false
-  let onExited = () => {
-    exited =true
+  let returnedError = null
+  let onExited = (error) => {
+    exited = true
+    returnedError = error
   }
   await chromy.chain()
     .console(msg => {
@@ -65,7 +67,11 @@ async function startRecording (params) {
     let t = setInterval(() => {
       if (exited) {
         clearInterval(t)
-        resolve()
+        if (returnedError) {
+          reject(error)
+        } else {
+          resolve()
+        }
       }
     }, 200)
   })

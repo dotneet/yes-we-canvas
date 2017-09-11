@@ -19,5 +19,13 @@ if (args.length > 2) {
   params = JSON.parse(json)
 }
 
-record(params, startServer)
+async function main() {
+  try {
+    await record(params, startServer)
+  } catch (e) {
+    console.error(e)
+  }
+}
+
+main()
 

@@ -186,7 +186,7 @@
       createMovie () {
         this.context.socket.emit('create_movie', {}, (err, stdout, stderr) => {
           if (this.isBatch) {
-            this.$bus.$emit('finish_record')
+            this.$bus.$emit('finish_record', err)
           } else {
             if (err !== null) {
               alert(stderr)
