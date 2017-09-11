@@ -84,7 +84,7 @@ async function startRecording (params) {
 }
 
 async function recording (params, startServer) {
-  const server = await startServer(commandPort)
+  const server = await startServer(config.commandPort)
   try {
     await startRecording(params)
   } finally {
