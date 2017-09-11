@@ -8,7 +8,7 @@
 const Chromy = require('chromy')
 const fs = require('fs')
 
-const chromyOpts = {visible: true}
+const chromyOpts = {}
 if (process.env.CHROME_PATH) {
   chromyOpts['chromePath'] = process.env.CHROME_PATH
 }
