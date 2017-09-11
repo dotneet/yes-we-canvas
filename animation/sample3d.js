@@ -20,37 +20,33 @@ animation.params = {
 // init() is called once before starting animation
 animation.init = async function (config) {
   // movieLength express the length of movie in seconds.
-  config.movieLength = 10
+  config.movieLength = 13
   // frameRate express the frame-count by second.
   config.frameRate = 30
 
   const context = this.three.init3D()
   let scene = context.scene
 
-  let line = this.three.createLine({color: 0x0000ff}, [
-    [-50, -50, 1],
-    [-50, 50, 1],
-    [50, 50, 1],
-    [50, -50, -1],
-    [-50, -50, -1]
-  ])
-  line.rotation.z = 0.1
-  line.position.set(0, 0, -20)
-  scene.add(line)
-
+  this.origin = 0
+  const u = (Math.PI / 180.0)
   this.images = []
   for (let i in this.params.images) {
     let img = this.params.images[i]
-    // let sprite = await this.three.createSpriteFromImage(img)
-    let sprite = await this.three.createMeshFromImage(img)
-    console.log(sprite)
-    sprite.position.set(-300 + (i*80), -100 + i*40, 0)
-    sprite.scale.set(80, 80, 1)
+    let sprite = await this.three.createMeshFromImage(img, 4, 3)
+    sprite.scale.set(4 * 20, 3 * 20, 1)
+
+    const ox = i * 60
+    const oy = i * 60 - 90
+    const oz = i * 60
+    let x = Math.sin(u * ox) * 200.0
+    let y = Math.cos(u * oy) * 50.0
+    let z = Math.cos(u * oz) * 480.0
+    console.log(x, y, z)
+    sprite.position.set(x, y, z)
+
     scene.add(sprite)
     this.images.push(sprite)
   }
-
-  this.line = line
 
   // if this.render is defined, it is called every time after update()
   this.render = context.render
@@ -61,11 +57,16 @@ animation.update = function (key) {
   if (key === 1) {
     this.audio.play('bgm01.mp3')
   }
-  /*
-  this.images.forEach(img => {
-    img.position.z += 10
-    img.rotation.z += 0.1
-  })
-  */
-  // this.line.rotation.z += 0.1
+
+  const u = (Math.PI / 180.0)
+  for (let i in this.images) {
+    let img = this.images[i]
+    const ox = i * 60
+    const oy = i * 60 - 90
+    const oz = i * 60
+    let x = Math.sin(u * (ox + key)) * 200.0
+    let y = Math.cos(u * (oy + key)) * 50.0
+    let z = Math.cos(u * (oz + key)) * 480.0
+    img.position.set(x, y, z)
+  }
 }

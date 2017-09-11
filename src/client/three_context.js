@@ -10,6 +10,7 @@ export default class ThreeContext {
   // 平行投影カメラを使うのでZ座標の変化による表示サイズのスケールは行われない
   init (width = 640, height = 480) {
     let scene = new THREE.Scene()
+    scene.background = new THREE.Color(0xffffff)
 
     let camera = new THREE.OrthographicCamera(-width / 2, width / 2, -height / 2, width / 2, 0.001, 5000)
     camera.position.set(0, 0, -1000)
@@ -38,6 +39,7 @@ export default class ThreeContext {
   init3D (width = 640, height = 480) {
     this.is3D = true
     let scene = new THREE.Scene()
+    scene.background = new THREE.Color(0xffffff)
 
     let camera = new THREE.PerspectiveCamera(45, width / height, 0.001, 5000)
     camera.position.set(0, 0, -580)
@@ -76,12 +78,9 @@ export default class ThreeContext {
   loadImage (image) {
     return new Promise((resolve, reject) => {
       new THREE.TextureLoader().load(image, (texture) => {
-        /*
         texture.minFilter = THREE.LinearFilter
-        if (!this.is3D) {
-          texture.flipY = false
-        }
-        */
+        texture.magFilter = THREE.LinearMipmapLinearFilter
+        texture.flipY = false
         resolve(texture)
       }, null, (e) => {
         reject(e)
@@ -95,16 +94,19 @@ export default class ThreeContext {
     return new THREE.Sprite(material)
   }
 
-  async createMeshFromImage (imageUrl) {
+  async createMeshFromImage (imageUrl, w, h) {
     const map = await this.loadImage(imageUrl)
     // const map = THREE.ImageUtils.loadTexture(imageUrl)
-    let material = new THREE.MeshPhongMaterial({
-      color: '#FFFFFFFF',
-      map: map
+    let material = new THREE.MeshBasicMaterial({
+      color: '#FFFFFF',
+      map: map,
+      transparent: true
     })
     // let geo = this.createSquareGeometory()
-    let geo = new THREE.BoxGeometry(1, 1, 1)
-    return new THREE.Mesh(geo, material)
+    let geo = new THREE.PlaneGeometry(1, 1, 1, 1)
+    let mesh = new THREE.Mesh(geo, material)
+    mesh.rotation.x = -Math.PI
+    return mesh
   }
 
   createSquareGeometory () {
@@ -113,8 +115,12 @@ export default class ThreeContext {
     squareGeometry.vertices.push(new THREE.Vector3(1.0, 1.0, 0.0))
     squareGeometry.vertices.push(new THREE.Vector3(1.0, -1.0, 0.0))
     squareGeometry.vertices.push(new THREE.Vector3(-1.0, -1.0, 0.0))
-    squareGeometry.faces.push(new THREE.Face3(0, 1, 2))
-    squareGeometry.faces.push(new THREE.Face3(0, 2, 3))
+    let face1 = new THREE.Face3(0, 1, 2)
+    face1 = new THREE.Vector3(0, 0, 1)
+    let face2 = new THREE.Face3(0, 2, 3)
+    face2 = new THREE.Vector3(0, 0, 1)
+    squareGeometry.faces.push(face1)
+    squareGeometry.faces.push(face2)
     return squareGeometry
   }
 }
