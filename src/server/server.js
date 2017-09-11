@@ -19,11 +19,18 @@ async function startServer (port = 8000) {
   app.use(bodyParser.json())
   app.use(bodyParser.urlencoded({extended: true}))
 
+  // start recording video
   app.post('/animation/:name/record', async function (req, res) {
-    await record(req.body, startServer)
+    try {
+      await record(req.body, startServer)
+    } catch (e) {
+      res.status(500).json({message: e.message})
+      return
+    }
     res.json({message: 'OK'})
   })
 
+  // forwarding get request to the uri that is specified by the parameter.
   // this endpoint can be used to get around CORS restrict
   app.get('/proxy', async function (req, res) {
     let url = req.query.url

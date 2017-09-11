@@ -32,7 +32,7 @@ async function onReceive (onExited, additionalParams, params) {
     // do nothing.
   } else if (data.cmd === 'exit') {
     console.log('exit')
-    onExited.apply(null, [data.error])
+    onExited(data.error)
     await chromy.close()
   } else {
     console.log('unknown command')
@@ -63,28 +63,29 @@ async function startRecording (params) {
     .catch(e => {
       console.log(e)
     })
-  await new Promise((resolve, reject) => {
+  const err = await new Promise((resolve, reject) => {
     let t = setInterval(() => {
       if (exited) {
         clearInterval(t)
         if (returnedError) {
-          reject(error)
+          resolve(returnedError)
         } else {
-          resolve()
+          resolve(null)
         }
       }
     }, 200)
   })
   await chromy.close()
+  if (err) {
+    throw err
+  }
+  return null
 }
 
 async function recording (params, startServer) {
-  console.log(typeof startServer)
   const server = await startServer(8001)
   try {
     await startRecording(params)
-  } catch (e) {
-    console.log(e)
   } finally {
     server.close()
     console.log('SERVER WAS CLOSED.')
@@ -92,4 +93,3 @@ async function recording (params, startServer) {
 }
 
 module.exports = recording
-

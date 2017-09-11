@@ -248,9 +248,6 @@ module.exports = function (io, serverConfig) {
           Body: fs.readFileSync(outputPath)
         }
         s3.putObject(params, function (err, data) {
-          if (err) {
-            console.error(err)
-          }
           cb(err, stdout, stderr)
         })
       } else {
