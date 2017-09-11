@@ -29,12 +29,21 @@ function mimeTypeToExtension (mimeType) {
 }
 
 function download (url, path, callback) {
-  let file = fs.createWriteStream(path)
-  http.get(url, function (response) {
-    response.pipe(file)
-    response.on('end', function () {
-      callback(file)
-    })
+  return new Promise((resolve, reject) => {
+    try {
+      let file = fs.createWriteStream(path)
+      http.get(url, function (response) {
+        response.pipe(file)
+        response.on('end', function () {
+          if (callback) {
+            callback(file)
+          }
+          resolve(file)
+        })
+      })
+    } catch (e) {
+      reject(e)
+    }
   })
 }
 
@@ -151,42 +160,43 @@ module.exports = function (io, serverConfig) {
       next()
     })
 
-    socket.on('create_movie', function (data, cb) {
+    socket.on('create_movie', async function (data, cb) {
+      console.log('[server] start create_movie task') 
       console.log(context.options)
-      if (context.options.sounds !== null) {
+      try {
+        if (context.options.sounds === null || context.options.sounds.length === 0) {
+          return createMovie(cb, null)
+        }
         let sounds = context.options.sounds
         let soundInputs = []
         let len = sounds.length
-        sounds.forEach(function (sound) {
-          console.log(sound)
+        for (let i in sounds) {
+          let sound = sounds[i]
+          console.log('sound:', sound)
           let url = sound.src
           if (url.indexOf('http://') !== -1 || url.indexOf('https://') !== -1) {
             let soundOutputPath = util.format('%s/download.mp3', outputDir)
             console.log('download from: ' + url)
-            download(url, soundOutputPath, () => {
-              let s = clone(sound)
-              s.src = soundOutputPath
-              soundInputs.push(s)
-              if (soundInputs.length === len) {
-                createMovie(cb, soundInputs)
-              }
-            })
+            await download(url, soundOutputPath)
+            let s = clone(sound)
+            s.src = soundOutputPath
+            soundInputs.push(s)
           } else {
             let s = clone(sound)
             s.src = wwwDir + '/' + url
             soundInputs.push(s)
-            if (soundInputs.length === len) {
-              createMovie(cb, soundInputs)
-            }
           }
-        })
-      } else {
-        createMovie(cb, null)
+        }
+        createMovie(cb, soundInputs)
+      } catch (e) {
+        console.error(e)
+        cb(e, '', '')
       }
     })
   })
 
   async function createMovie (cb, soundInputs) {
+    console.log('[server] createMovie()')
     let ext = mimeTypeToExtension(context.options.imageFormat)
     let inputField = util.format('%s/%%d.%s', outputDir, ext)
     let ffmpegCmd = serverConfig.ffmpegCmd
@@ -247,7 +257,9 @@ module.exports = function (io, serverConfig) {
           Key: url.pathname.substr(1),
           Body: fs.readFileSync(outputPath)
         }
+        console.log('Uploading to S3...')
         s3.putObject(params, function (err, data) {
+          console.log('Uploading process is done')
           cb(err, stdout, stderr)
         })
       } else {
