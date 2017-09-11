@@ -7,7 +7,7 @@ const glob = require('glob')
 const record = require('../lib/record')
 const request = require('request')
 
-async function startServer (port = 8000) {
+async function startServer (port = 8100) {
 
   const app = express()
   const http = require('http').Server(app)

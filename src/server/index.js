@@ -1,2 +1,4 @@
+const config = require('../../app-config')
 const startServer = require('./server')
-startServer(8000)
+startServer(config.serverPort)
+

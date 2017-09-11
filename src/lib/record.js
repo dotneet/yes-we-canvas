@@ -6,6 +6,7 @@
  */
 
 const Chromy = require('chromy')
+const config = require('../../app-config')
 const fs = require('fs')
 
 const chromyOpts = {}
@@ -51,7 +52,7 @@ async function startRecording (params) {
     .console(msg => {
       console.log(msg)
     })
-    .goto('http://localhost:8001/index.html')
+    .goto(`http://localhost:${config.commandPort}/index.html`)
     .sleep(100)
     .receiveMessage(onReceive.bind(this, onExited, params))
     .sleep(100)
@@ -83,7 +84,7 @@ async function startRecording (params) {
 }
 
 async function recording (params, startServer) {
-  const server = await startServer(8001)
+  const server = await startServer(commandPort)
   try {
     await startRecording(params)
   } finally {
