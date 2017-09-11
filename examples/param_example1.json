@@ -1,7 +1,7 @@
 {
   "description": "This is a example parameter file that is supplied to record.js",
   "script": "sample3d.js",
-  "output": "www/output.mp4",
+  "output": "s3://bpush-test/output.mp4",
   "params": {
     "width": 200,
     "height": 200 

@@ -3,6 +3,9 @@ const http = require('http')
 const childProcess = require('child_process')
 const util = require('util')
 const glob = require('glob')
+const temp = require('temp')
+const {URL} = require('url')
+const AWS = require('aws-sdk')
 
 function clone (obj) {
   if (obj === null || typeof obj !== 'object') return obj
@@ -31,6 +34,17 @@ function download (url, path, callback) {
     response.pipe(file)
     response.on('end', function () {
       callback(file)
+    })
+  })
+}
+
+function createTempFile (prefix) {
+  return new Promise((resolve, reject) => {
+    temp.open(prefix, function (err, info) {
+      if (err) {
+        return reject(err)
+      }
+      resolve(info)
     })
   })
 }
@@ -172,7 +186,7 @@ module.exports = function (io, serverConfig) {
     })
   })
 
-  function createMovie (cb, soundInputs) {
+  async function createMovie (cb, soundInputs) {
     let ext = mimeTypeToExtension(context.options.imageFormat)
     let inputField = util.format('%s/%%d.%s', outputDir, ext)
     let ffmpegCmd = serverConfig.ffmpegCmd
@@ -207,7 +221,14 @@ module.exports = function (io, serverConfig) {
         soundArgs += util.format(' -filter_complex "%s%s%samix=inputs=%d:duration=first:dropout_transition=1" ', trimArgs, delayArgs, songs, soundInputs.length)
       }
     }
-    let cmd = util.format('%s -y -r %d -i %s %s -r %d ', ffmpegCmd, fps, inputField, soundArgs, fps, context.getOutputPath())
+    let outputPath = context.getOutputPath()
+    let useS3 = outputPath.indexOf('s3:') === 0
+    let tmpFile = null
+    if (useS3) {
+      tmpFile = await createTempFile({prefix: 'genvideo', suffix: '.mp4'})
+      outputPath = tmpFile.path
+    }
+    let cmd = util.format('%s -y -r %d -i %s %s -r %d ', ffmpegCmd, fps, inputField, soundArgs, fps, outputPath)
     console.log('')
     console.log(cmd)
     childProcess.exec(cmd, {}, (err, stdout, stderr) => {
@@ -217,7 +238,21 @@ module.exports = function (io, serverConfig) {
       if (stderr !== null) {
         console.log(stderr)
       }
-      cb(err, stdout, stderr)
+      if (useS3) {
+        let s3Path = context.getOutputPath()
+        let url = new URL(s3Path)
+        let s3 = new AWS.S3()
+        let params = {
+          Bucket: url.host,
+          Key: url.pathname.substr(1),
+          Body: fs.readFileSync(outputPath)
+        }
+        s3.putObject(params, function (err, data) {
+          cb(err, stdout, stderr)
+        })
+      } else {
+        cb(err, stdout, stderr)
+      }
     })
   }
 }

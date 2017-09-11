@@ -65,11 +65,16 @@ node src/command/record.js exmaples/param_example1.json
 ```json
 {
   "script": "sample.js",
+  "output": "www/output.mp4",
   "params": {
     "img1": "http://example.com/image/abc.png"
   }
 }
 ```
+
+`output` property supports also AWS S3.
+For example, you set 's3://yorubucket/output.mp4' to `output` property, output is uploaed to S3 bucket.
+A credential for S3 must be stored in .aws directory on your home directory.
 
 # License
 
