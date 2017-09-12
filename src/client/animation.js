@@ -13,7 +13,6 @@ class AnimationContext {
     this.audio2 = context.audio2
     this.audio3 = context.audio3
     this.audio4 = context.audio4
-    this.fabricUtil = this.getFabricUtil()
     this.three = new ThreeContext()
   }
 
@@ -48,21 +47,6 @@ class AnimationContext {
       camera,
       render,
       renderer
-    }
-  }
-
-  getFabricUtil () {
-    return {
-      loadImage: function (url, options = null) {
-        return new Promise(function (resolve, reject) {
-          window.fabric.Image.fromURL(url, function (img) {
-            resolve(img)
-          }, options)
-        })
-      },
-      createText: function (text, options = null) {
-        return new window.fabric.Text(text, options)
-      }
     }
   }
 }
