@@ -257,6 +257,9 @@ module.exports = function (io, serverConfig) {
           Key: url.pathname.substr(1),
           Body: fs.readFileSync(outputPath)
         }
+        if (context.serverConfig.s3 && context.serverConfig.s3.options) {
+          Object.assign(params, context.serverConfig.s3.options)
+        }
         console.log('Uploading to S3...')
         s3.putObject(params, function (err, data) {
           console.log('Uploading process is done')

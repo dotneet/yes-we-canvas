@@ -9,7 +9,15 @@ module.exports = {
   serverPort: 8100,
   commandPort: 8101,
   appRootDir: __dirname,
-  ffmpegCmd: '/home/travelme/yes-we-canvas/docker/ffmpeg',
+  ffmpegCmd: '/usr/local/bin/ffmpeg',
   outputDir: path.join(__dirname, 'output'),
-  wwwDir: path.join(__dirname, 'www')
+  wwwDir: path.join(__dirname, 'www'),
+  s3: {
+    options: {
+      ACL: "public-read", 
+      Metadata: {
+        "Content-Type": "video/mp4"
+      }
+    }
+  }
 }
