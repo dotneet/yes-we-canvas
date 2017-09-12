@@ -11,5 +11,13 @@ module.exports = {
   appRootDir: __dirname,
   ffmpegCmd: '/usr/local/bin/ffmpeg',
   outputDir: path.join(__dirname, 'output'),
-  wwwDir: path.join(__dirname, 'www')
+  wwwDir: path.join(__dirname, 'www'),
+  s3: {
+    options: {
+      ACL: "public-read", 
+      Metadata: {
+        "Content-Type": "video/mp4"
+      }
+    }
+  }
 }
