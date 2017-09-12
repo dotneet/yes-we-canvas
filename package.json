@@ -4,6 +4,7 @@
   "description": "animation creating environment.",
   "main": "src/server/index.js",
   "scripts": {
+    "start": "node src/server/index.js",
     "dev": "node-dev src/server/index.js",
     "build": "webpack --progress --hide-modules --config build/webpack.dev.conf.js",
     "watch": "webpack --watch --config build/webpack.dev.conf.js"

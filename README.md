@@ -5,14 +5,13 @@ YWC(Yes we canvas) is a tool for writing animation in javascript and exporting a
 # Dependencies
 
  - NodeJS (8.0 or later)
+ - Chrome 61 or later
  - ffmpeg
- - Chrome 60 or later
 
 # Set Up
 
 ```
 npm install
-bower install
 npm run build
 ```
 
@@ -21,23 +20,28 @@ npm run build
 ## Launch server
 
 ```bash
-npm run server
+npm start
 ```
+
+Open the url 'http://localhost:8100' with chrome browser.
 
 ## Write an animation
 
-you can write an animation script at "animation/*.js".
+You can write an animation script at the animation directory.
+three.js can be used to rendering an object.
+three.js provide an ability to write both 2d and 3d animation with YWC.
+Please read animation/sample.js to know what you can do in this product.
 
 ## Show animation and export as video file
 
-Open the url 'http://localhost:8000' in chrome browser.
+Open the url 'http://localhost:8100' with chrome browser.
 
 ### animation.init(config)
 
 animation.init() is called once when starting animation.
 
-this.canvas: fabric.StaticCanvas  
 this.audio: for controling audio playing.
+this.three: three utility
 config: animation configuration.
 
 #### config
@@ -51,7 +55,6 @@ frameRate: frame per second.
 
 animation.update() is called by every frame.
 
-this.canvas: fabric.StaticCanvas  
 key: current frame number
 
 ## writing a video file by command line.
@@ -74,7 +77,7 @@ node src/command/record.js exmaples/param_example1.json
 
 `output` property supports also AWS S3.
 For example, you set 's3://yorubucket/output.mp4' to `output` property, output is uploaed to S3 bucket.
-A credential for S3 must be stored in .aws directory on your home directory.
+Credentials for S3 must be stored in .aws directory on your home directory.
 
 # License
 
