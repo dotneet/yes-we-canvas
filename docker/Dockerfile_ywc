@@ -1,0 +1,22 @@
+FROM node
+
+RUN apt-get update && apt-get install -y git
+RUN npm i -g yarn gulp bower
+
+RUN useradd ywc --shell /bin/bash --create-home \
+  && usermod -a -G sudo ywc \
+  && echo 'ALL ALL = (ALL) NOPASSWD: ALL' >> /etc/sudoers \
+  && echo 'ywc:nopassword' | chpasswd
+
+WORKDIR /home/ywc
+USER ywc
+
+ADD files/start.sh start.sh
+
+RUN git clone https://github.com/dotneet/yes-we-canvas.git
+RUN cd yes-we-canvas && yarn && bower i
+ADD files/app-config.js yes-we-canvas/app-config.js
+
+RUN mkdir .aws && chmod 700 .aws
+
+ENTRYPOINT ["/bin/bash", "/home/ywc/start.sh"]

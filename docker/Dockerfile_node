@@ -1,0 +1,11 @@
+FROM chrome
+
+RUN apt-get install -y wget
+RUN wget https://nodejs.org/dist/v8.4.0/node-v8.4.0-linux-x64.tar.xz \
+    && xz -d node-v8.4.0-linux-x64.tar.xz \
+    && tar xf node-v8.4.0-linux-x64.tar \
+    && mv node-v8.4.0-linux-x64 /opt/node \
+    && rm node-v8.4.0-linux-x64.tar
+
+ENV PATH $PATH:/opt/node/bin
+
