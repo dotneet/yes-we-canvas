@@ -11,8 +11,8 @@ YWC(Yes we canvas) is a tool for writing animation in javascript and exporting a
 # Set Up
 
 ```
-npm install
-npm run build
+yarn install
+yarn run build
 ```
 
 # How to use it
