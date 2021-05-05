@@ -14,7 +14,7 @@
   "homepage": "http://devneko.net/",
   "dependencies": {
     "aws-sdk": "^2.112.0",
-    "axios": "^0.19.0",
+    "axios": "^0.21.1",
     "blueimp-canvas-to-blob": "^3.3.0",
     "body-parser": "^1.18.0",
     "chromy": "^0.5.3",
