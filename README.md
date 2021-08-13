@@ -32,7 +32,7 @@ three.js can be used to rendering an object.
 three.js provide an ability to write both 2d and 3d animation with YWC.
 Please read animation/sample.js to know what you can do in this product.
 
-## Show animation and export as video file
+## Show animation and export as a video file
 
 Open the url 'http://localhost:8100' with chrome browser.
 
